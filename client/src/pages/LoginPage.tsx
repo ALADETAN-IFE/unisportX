@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { login as reduxLogin } from '../utils/user';
+import { toast } from 'react-toastify';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -10,6 +13,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,18 +21,26 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const loginData = username ? { username, password } : { email, password };
-      const response = await axios.post('http://localhost:5000/api/auth/login', loginData, {
+      const formData = username ? { username, password } : { email, password };
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/login`, formData, {
         withCredentials: true
       });
 
       if (response.data.message === 'User logged in successfully') {
-        // Store user info in localStorage
-        localStorage.setItem('user', JSON.stringify(response.data.data));
-        navigate('/dashboard');
+        toast.success("User logged in successfully")
+        setTimeout(() => {     
+          reduxLogin(dispatch, response.data.data);
+          navigate('/dashboard');
+        }, 2000);
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || 'Login failed');
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Login failed');
+      }
     } finally {
       setLoading(false);
     }

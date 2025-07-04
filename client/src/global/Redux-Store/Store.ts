@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import carCareReducer from "../Redux-actions/carCare";
+import uniSportXReducer from "../Redux-actions/actions";
 import {
   persistStore,
   persistReducer,
@@ -17,11 +17,11 @@ const persistConfig = {
   storage,
 }
 
-const persistedReducer = persistReducer(persistConfig, carCareReducer)
+const persistedReducer = persistReducer(persistConfig, uniSportXReducer)
 
 export const store = configureStore({
     reducer: {
-        carCare: persistedReducer,
+        uniSportX: persistedReducer,
       },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -32,3 +32,6 @@ export const store = configureStore({
 })
 
 export const persistor = persistStore(store)
+
+export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>

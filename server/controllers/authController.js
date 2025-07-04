@@ -10,11 +10,11 @@ exports.signup = async (req, res) => {
   try {
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ msg: 'User already exists' });
+      return res.status(400).json({ message: 'The email already exists' });
     }
 
     user = new User({
-      name,
+      username,
       email,
       password,
     });
@@ -23,9 +23,20 @@ exports.signup = async (req, res) => {
     generateToken(user, res)
     
     await user.save();
-    res.status(201).json({ message: 'User registered successfully' });
+
+    const { password: _, ...userWithoutPassword } = user._doc;
+
+    res.status(201).json({ message: 'User registered successfully', data: userWithoutPassword });
   } catch (err) {
     console.error(err.message);
+    // Handle MongoDB duplicate key errors
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyValue)[0];
+      const value = err.keyValue[field];
+      return res.status(400).json({ 
+        message: `${field.charAt(0).toUpperCase() + field.slice(1)} "${value}" is already taken. Please choose a different ${field}.` 
+      });
+    }
     res.status(500).json({ message: 'Something went wrong' });
   }
 };
@@ -38,7 +49,7 @@ exports.login = async (req, res) => {
     if (!payload.username && !payload.email) {
       return res.status(400).json({ message: 'Username or email is required' });
     }
-    let user = await User.findOne(payload);
+    const user = await User.findOne(payload);
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -50,7 +61,8 @@ exports.login = async (req, res) => {
 
    generateToken(user, res)
 
-    res.status(200).json({ message: 'User logged in successfully', data: user });
+    const { password: _, ...userWithoutPassword } = user._doc;
+    res.status(200).json({ message: 'User logged in successfully', data: userWithoutPassword });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: 'Something went wrong' });

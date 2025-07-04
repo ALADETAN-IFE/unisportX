@@ -7,8 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const App = () => {
   return (
     <>
-    <RouterProvider router={Routes} fallbackElement={<div>Something is wrong</div>} />
-    <ToastContainer position='top-right' autoClose="2800" />
+    <RouterProvider router={Routes} />
+    <ToastContainer position='top-right' autoClose={2800} />
    </>
   )
 }

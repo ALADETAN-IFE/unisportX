@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { login as reduxLogin } from '../utils/user';
+import { toast } from 'react-toastify';
 
 const SignupPage = () => {
   const [username, setUsername] = useState('');
@@ -10,26 +13,40 @@ const SignupPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
+    const formData = {
+      username,
+      email,
+      password
+    }
+
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/signup', {
-        username,
-        email,
-        password
-      }, {
+      const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/signup`, formData , {
         withCredentials: true
       });
 
       if (response.data.message === 'User registered successfully') {
-        navigate('/login');
+        toast.success("User registered in successfully")
+        setTimeout(() => {     
+          reduxLogin(dispatch, response.data.data);
+          navigate('/dashboard');
+        }, 2000);
       }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Signup failed');
+    } catch (err) {
+      console.log(error)
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || 'Signup failed');
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Signup failed');
+      }
     } finally {
       setLoading(false);
     }

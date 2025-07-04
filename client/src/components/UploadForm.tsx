@@ -35,9 +35,14 @@ const UploadForm = () => {
       setTitle('');
       setFaculty('');
       setFile(null);
-    } catch (err: any) {
-      console.error('Error uploading file:', err);
-      setMessage(err.response?.data?.message || 'Error uploading file');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setMessage(err.response?.data?.message || 'Error uploading file');
+      } else if (err instanceof Error) {
+        setMessage(err.message);
+      } else {
+        setMessage('Error uploading file');
+      }
     } finally {
       setLoading(false);
     }

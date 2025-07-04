@@ -25,8 +25,9 @@ const VideoGrid = () => {
   }, []);
 
   const getYouTubeEmbedUrl = (url: string) => {
-    const videoId = url.split('v=')[1];
-    return `https://www.youtube.com/embed/${videoId}`;
+    const videoIdWithParams = url.split('v=')[1];
+    const videoId = videoIdWithParams ? videoIdWithParams.split('&')[0] : '';
+    return `https://www.youtube.com/embed/${videoId}?modestbranding=1&rel=0`;
   };
 
   return (
