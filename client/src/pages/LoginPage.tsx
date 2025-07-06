@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { login as reduxLogin } from '../utils/user';
 import { toast } from 'react-toastify';
+import ResendVerification from '../components/ResendVerification';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -13,6 +14,8 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showResendVerification, setShowResendVerification] = useState(false);
+  const [resendEmail, setResendEmail] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -22,21 +25,32 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const formData = username ? { username, password } : { email, password };
+      const formData = username ? { 
+        username: username.charAt(0).toUpperCase() + username.slice(1).toLowerCase(), 
+        password 
+      } : { email, password };
       const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/login`, formData, {
         withCredentials: true
       });
 
       if (response.data.message === 'User logged in successfully') {
-        toast.success("User logged in successfully")
+        toast.success(`Welcome back ${response.data?.data?.username}`)
         setTimeout(() => {     
           reduxLogin(dispatch, response.data.data);
-          navigate('/dashboard');
+          navigate('/app');
         }, 2000);
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || 'Login failed');
+        const errorMessage = err.response?.data?.message || 'Login failed';
+        setError(errorMessage);
+        
+        // If user needs verification, show special message and resend option
+        if (err.response?.data?.needsVerification) {
+          setResendEmail(err.response?.data?.email)
+          setError('Please verify your email address before logging in. Check your inbox for the verification link.');
+          setShowResendVerification(true);
+        }
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
@@ -47,96 +61,128 @@ const LoginPage = () => {
     }
   };
 
-  return (
-    <motion.div 
-      className="container mx-auto p-8 flex justify-center"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="w-full max-w-md">
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
-          <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">Login</h2>
-          
-          {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-              {error}
-            </div>
-          )}
+  const handleResendVerification = () => {
+    if (resendEmail) {
+      setShowResendVerification(true);
+    } else {
+      setError('Please enter your email address to resend verification');
+    }
+  };
 
-          <div className="mb-4">
-            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="username">
-              Username or Email
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
-              type="text"
-              placeholder="Username or Email"
-              value={username || email}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value.includes('@')) {
-                  setEmail(value);
-                  setUsername('');
-                } else {
-                  setUsername(value);
-                  setEmail('');
-                }
-              }}
-              required
-              disabled={loading}
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="password">
-              Password
-            </label>
-            <div className="relative">
+  return (
+    <>
+      <motion.div 
+        className="container mx-auto p-8 flex justify-center"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="w-full max-w-md">
+          <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
+            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">Login</h2>
+            
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {error}
+                {error.includes('verify your email') && (
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    className="block mt-2 text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Resend verification email
+                  </button>
+                )}
+              </div>
+            )}
+
+            <div className="mb-4">
+              <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="username">
+                Username or Email
+              </label>
               <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="username"
+                type="text"
+                placeholder="Username or Email"
+                value={username || email}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.includes('@')) {
+                    setEmail(value);
+                    setUsername('');
+                  } else {
+                    setUsername(value);
+                    setEmail('');
+                  }
+                }}
+                required
+                disabled={loading}
+              />
+            </div>
+            <div className="mb-6">
+              <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="password">
+                Password
+              </label>
+              <div className="relative">
+              <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
                 id="password"
-                type={showPassword ? "text" : "password"}
+                  type={showPassword ? "text" : "password"}
                 placeholder="******************"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
               />
+                <button
+                  type="button"
+                  className="absolute top-1/2 right-0 pr-3 transform -translate-y-1/2 flex items-center"
+                  onClick={() => setShowPassword(!showPassword)}
+                  disabled={loading}
+                >
+                  {showPassword ? (
+                    <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+            <div className="flex items-center justify-between mb-4">
               <button
-                type="button"
-                className="absolute top-1/2 right-0 pr-3 transform -translate-y-1/2 flex items-center"
-                onClick={() => setShowPassword(!showPassword)}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
+                type="submit"
                 disabled={loading}
               >
-                {showPassword ? (
-                  <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                  </svg>
-                ) : (
-                  <svg className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                )}
+                {loading ? 'Signing In...' : 'Sign In'}
               </button>
+              <Link to="/signup" className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                Don't have an account?
+              </Link>
             </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? 'Signing In...' : 'Sign In'}
-            </button>
-            <Link to="/signup" className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
-              Don't have an account?
-            </Link>
-          </div>
-        </form>
-      </div>
-    </motion.div>
+            
+            <div className="text-center">
+              <Link to="/forgot-password" className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                Forgot your password?
+              </Link>
+            </div>
+          </form>
+        </div>
+      </motion.div>
+
+      {showResendVerification && (
+        <ResendVerification
+          email={resendEmail}
+          onClose={() => setShowResendVerification(false)}
+        />
+      )}
+    </>
   );
 };
 

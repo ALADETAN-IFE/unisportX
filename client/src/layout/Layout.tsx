@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
 import { useState, useEffect } from "react";
 import LoadingScreen from "../components/LoadingScreen";
+import ScrollToTopBtn from "../components/ScrollToTopBtn";
 
 
 const Layout = () => {
@@ -26,6 +27,7 @@ const Layout = () => {
       <main>
         <Outlet />
       </main>
+      <ScrollToTopBtn />
     </div>
   );
 };

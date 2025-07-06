@@ -3,8 +3,13 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 // import { motion } from 'framer-motion';
 import { motion } from 'motion/react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import type { RootState } from '../global/Redux-Store/Store';
+import { Feed, Video } from '../assets/Icon';
+import { scrollToTop } from '../utils/scrollToTop';
+import { logOut } from '../global/Redux-actions/actions';
+import LogoutConfirm from './LogoutConfirm';
+import { toast } from 'react-toastify';
 
 interface ModeProps {
   darkMode: boolean;
@@ -14,8 +19,10 @@ interface ModeProps {
 const Header = ({darkMode, setDarkMode}: ModeProps) => {
   // const [user, setUser] = useState<User | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const { isLoggedIn, userData } = useSelector((state: RootState) => state.uniSportX);
 
   // Initialize dark mode from localStorage and system preference
@@ -29,6 +36,12 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
       setDarkMode(prefersDark);
     }
   }, []);
+
+  // Scroll to top when route changes
+  useEffect(() => {
+    scrollToTop();
+  }, [location.pathname]);
+
 
   // Apply dark mode class to document
   useEffect(() => {
@@ -45,22 +58,28 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
     setDarkMode(!darkMode);
   };
 
+  const confirmLogout = () => {
+    setShowLogoutConfirm(true);
+  };
+
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout', {}, {
+      await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/logout`, {}, {
         withCredentials: true
       });
-      localStorage.removeItem('user');
-     
-      setMobileMenuOpen(false);
-      navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
-      // Still remove user data locally even if server logout fails
-      localStorage.removeItem('user');
+    } finally {
+      toast.success("You have logged out successfully")
+      dispatch(logOut());
       setMobileMenuOpen(false);
+      setShowLogoutConfirm(false);
       navigate('/');
     }
+  };
+
+  const closeLogoutConfirm = () => {
+    setShowLogoutConfirm(false);
   };
 
   const toggleMobileMenu = () => {
@@ -86,16 +105,26 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
                 <span className="text-gray-700 dark:text-gray-300 text-sm">
                   Welcome, {userData?.username}
                 </span>
-                {location.pathname !== '/dashboard' && (
+                {location.pathname !== '/app/videos' && (
                   <Link 
-                    to="/dashboard"
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 text-sm"
+                    to="/app/videos"
+                    className="flex gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 text-sm"
                   >
-                    Dashboard
+                   <Video />
+                    Videos
+                  </Link>
+                )}
+                {location.pathname !== '/app' && (
+                  <Link 
+                    to="/app"
+                    className="flex gap-1 item-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 text-sm"
+                  >
+                     <Feed />
+                    Feed
                   </Link>
                 )}
                 <button
-                  onClick={handleLogout}
+                  onClick={confirmLogout}
                   className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-200 text-sm"
                 >
                   Logout
@@ -185,17 +214,28 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
                   <span className="text-gray-700 dark:text-gray-300 text-sm px-2">
                     Welcome, {userData?.username}
                   </span>
-                  {location.pathname !== '/dashboard' && (
+                  {location.pathname !== '/app/videos' && (
                     <Link 
-                      to="/dashboard"
-                      className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 text-sm"
+                      to="/app/videos"
+                      className="flex gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 text-sm"
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      Dashboard
+                       <Video />
+                      Videos
+                    </Link>
+                  )}
+                  {location.pathname !== '/app' && (
+                    <Link 
+                      to="/app"
+                      className="flex gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 text-sm"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                       <Feed />
+                      Feed
                     </Link>
                   )}
                   <button
-                    onClick={handleLogout}
+                    onClick={confirmLogout}
                     className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-200 text-sm text-left"
                   >
                     Logout
@@ -223,6 +263,13 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
           </motion.div>
         )}
       </nav>
+      
+      {/* Logout Confirmation Dialog */}
+      <LogoutConfirm
+        isOpen={showLogoutConfirm}
+        onClose={closeLogoutConfirm}
+        onConfirm={handleLogout}
+      />
     </header>
   );
 };

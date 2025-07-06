@@ -98,8 +98,47 @@ exports.uploadVideo = async (req, res) => {
 
     res.json({ success: true, video, res: response });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, error: "Upload failed", msg: err });
+    console.error('Video upload error:', err);
+    
+    // Clean up local file if it exists
+    if (req.file && req.file.path && fs.existsSync(req.file.path)) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (cleanupErr) {
+        console.error('Error cleaning up file:', cleanupErr);
+      }
+    }
+
+    // Handle specific YouTube API errors
+    if (err.code === 404 && err.message === 'Channel not found.') {
+      return res.status(400).json({ 
+        success: false, 
+        error: "YouTube channel not found",
+        message: "The YouTube channel associated with this account could not be found. Please ensure the YouTube account is properly set up and has a channel created."
+      });
+    }
+
+    if (err.code === 401 || err.code === 403) {
+      return res.status(400).json({ 
+        success: false, 
+        error: "YouTube authentication failed",
+        message: "YouTube API authentication has expired or is invalid. Please contact the administrator to refresh the YouTube integration."
+      });
+    }
+
+    if (err.code === 400) {
+      return res.status(400).json({ 
+        success: false, 
+        error: "YouTube API error",
+        message: "There was an issue with the YouTube API. Please try again or contact support."
+      });
+    }
+
+    res.status(500).json({ 
+      success: false, 
+      error: "Upload failed", 
+      message: "An unexpected error occurred during video upload. Please try again."
+    });
   }
 };
 
@@ -108,9 +147,9 @@ exports.getVideos = async (req, res) => {
   try {
     const videos = await Video.find().sort({ uploadTime: -1 });
     if (!videos || videos.length === 0) {
-      return res.status(404).json({ message: 'No videos found' });
+      return res.status(404).json({ message: 'No videos found', videos: [] });
     }
-    res.status(200).json(videos);
+    res.status(200).json({videos});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Something went wrong' });

@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'motion/react';
 import axios from 'axios';
+import { features, testimonials } from "../utils/datas"
+import Footer from '../components/Footer';
 
 interface IVideo {
   _id: string;
@@ -58,47 +60,6 @@ const Home = () => {
     return `https://www.youtube.com/embed/${videoId}?modestbranding=1&rel=0`;
   };
 
-  const features = [
-    {
-      icon: "🏆",
-      title: "Sports Highlights",
-      description: "Share and watch the best moments from university sports events"
-    },
-    {
-      icon: "🎥",
-      title: "Easy Upload",
-      description: "Simple video upload process with automatic YouTube integration"
-    },
-    {
-      icon: "👥",
-      title: "Community",
-      description: "Connect with fellow students and sports enthusiasts"
-    },
-    {
-      icon: "📱",
-      title: "Responsive",
-      description: "Access your favorite sports content on any device"
-    }
-  ];
-
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Basketball Captain",
-      content: "UniSportX has revolutionized how we share our team's achievements. The platform is incredibly user-friendly!"
-    },
-    {
-      name: "Mike Chen",
-      role: "Soccer Player",
-      content: "I love being able to watch highlights from other faculties. It really brings our university sports community together."
-    },
-    {
-      name: "Emma Davis",
-      role: "Sports Coordinator",
-      content: "As a sports coordinator, UniSportX has made it so much easier to showcase our university's athletic talent."
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       {/* Hero Section */}
@@ -114,8 +75,7 @@ const Home = () => {
             Welcome to <span className="text-blue-600 dark:text-blue-400">UniSportX</span>
           </h1>
           <p className="text-xl mb-8 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-        The ultimate platform for sharing and watching your university's sports highlights.
-            Connect with fellow athletes, celebrate victories, and build a stronger sports community.
+            The ultimate platform for sharing and watching your university's sports highlights and moments. Whether you're an athlete, a fan, or just part of the university community, join in to connect, celebrate victories, and enjoy the action together.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Link to="/signup">
@@ -142,7 +102,7 @@ const Home = () => {
           <h2 className="text-4xl font-bold text-center mb-12 text-gray-800 dark:text-white">
             Why Choose UniSportX?
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -217,14 +177,19 @@ const Home = () => {
                         <div className="p-4">
                           <h3 className="font-bold text-lg mb-2 text-gray-800 dark:text-white">{video.title}</h3>
                           <p className="text-gray-600 dark:text-gray-400">Faculty: {video.faculty}</p>
-                          <p className="text-gray-600 dark:text-gray-400">Description: {video.description}</p>
+                          <p className="text-gray-500 dark:text-gray-300 text-sm mt-1">{video.description}</p>
                         </div>
                       </motion.div>
                     ))}
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <p className="text-gray-600 dark:text-gray-400 text-lg">No videos available yet. Be the first to upload!</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">No videos available yet. Be the first to upload!</p>
+                    <Link to="/signup">
+                    <button className="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 transition duration-300">
+                      Join UnisportX to Upload a Video
+                    </button>
+              </Link>
                   </div>
                 )}
               </>
@@ -292,6 +257,7 @@ const Home = () => {
         </Link>
       </motion.div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -6,6 +6,8 @@ const connectDB = require('./config/db');
 const videoRoutes = require('./routes/videosRoutes');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const postRoutes = require('./routes/postRoutes');
+const sitemap = require('./routes/sitemap')
 
 // Connect to Database
 connectDB();
@@ -26,6 +28,8 @@ app.use(cookieParser());
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/videos', videoRoutes);
+app.use('/api/posts', postRoutes);
+app.use('/', sitemap);
 
 
 // Default route

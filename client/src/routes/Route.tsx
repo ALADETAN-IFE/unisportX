@@ -4,8 +4,16 @@ import ErrorPage from "../pages/ErrorPage";
 import Layout from "../layout/Layout";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
-import DashboardPage from "../pages/DashboardPage";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
+import VerifyEmailPage from "../pages/VerifyEmailPage";
+import VideosPage from "../pages/VideosPage";
+import FeedPage from "../pages/FeedPage";
 import PRroute from "../layout/PrivateRouting";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
+import TermsAndConditions from "../pages/TermsAndConditions";
+
+
 
 const Routes = createBrowserRouter([
   {
@@ -26,14 +34,45 @@ const Routes = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: "dashboard",
-        // path: "app",
+        path: "forgot-password",
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: "verify-email/:token",
+        element: <VerifyEmailPage />,
+      },
+      {
+        path: "privacy",
+        element: <PrivacyPolicy />,
+      },
+      {
+        path: "terms",
+        element: <TermsAndConditions />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPasswordPage />,
+      },
+      {
+        path: "app",
         element: <PRroute />,
         children: [
           {
+            // path: "feed",
             index: true,
-            element: <DashboardPage />,
+            element: <FeedPage />,
           },
+          {
+            // index: true,
+            path: "videos",
+            element: <VideosPage />,
+          },
+        ]
+      },
+      {
+        // path: "app",
+        element: <PRroute />,
+        children: [
         ]
       },
     ],

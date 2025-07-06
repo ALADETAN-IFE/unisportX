@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { login as reduxLogin } from '../utils/user';
+// import { useDispatch } from 'react-redux';
+// import { login as reduxLogin } from '../utils/user';
 import { toast } from 'react-toastify';
 
 const SignupPage = () => {
@@ -14,7 +14,7 @@ const SignupPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +22,7 @@ const SignupPage = () => {
     setLoading(true);
 
     const formData = {
-      username,
+      username: username.charAt(0).toUpperCase() + username.slice(1).toLowerCase(),
       email,
       password
     }
@@ -32,15 +32,14 @@ const SignupPage = () => {
         withCredentials: true
       });
 
-      if (response.data.message === 'User registered successfully') {
-        toast.success("User registered in successfully")
+      if (response.data.message.includes('User registered successfully')) {
+        toast.success("Account created successfully! Please check your email to verify your account.")
         setTimeout(() => {     
-          reduxLogin(dispatch, response.data.data);
-          navigate('/dashboard');
+          navigate('/login');
         }, 2000);
       }
     } catch (err) {
-      console.log(error)
+      console.log(err)
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || 'Signup failed');
       } else if (err instanceof Error) {
@@ -105,16 +104,16 @@ const SignupPage = () => {
               Password
             </label>
             <div className="relative">
-              <input
+            <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
-                id="password"
+              id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="******************"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
+              placeholder="******************"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={loading}
+            />
               <button
                 type="button"
                 className="absolute top-1/2 right-0 pr-3 transform -translate-y-1/2 flex items-center"
