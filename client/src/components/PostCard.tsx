@@ -132,13 +132,13 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
       // Success - sync with server data
       onPostUpdated();
     } catch (error) {
-      console.error('Error handling reaction:', error);
       
       // Revert optimistic update on error by refreshing the post
       onPostUpdated();
       
       if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || 'Error handling reaction');
+        console.error('Error handling reaction:', error);
+        // toast.error(error.response?.data?.message || 'Error handling reaction');
       } else {
         toast.error('Error handling reaction');
       }

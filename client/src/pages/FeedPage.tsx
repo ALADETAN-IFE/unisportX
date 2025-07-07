@@ -96,6 +96,16 @@ const FeedPage = () => {
     fetchPosts(1, false);
   }, [category]);
 
+  // Auto-refresh posts every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchPosts(1, false);
+    }, 30000); // 30 seconds
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, [category]); // Re-create interval when category changes
+
   const handleLoadMore = () => {
     if (!loadingMore && hasMore) {
       setLoadingMore(true);

@@ -87,6 +87,14 @@ exports.login = async (req, res) => {
    generateToken(user, res)
 
     const { password: _, ...userWithoutPassword } = user._doc;
+    
+    // Debug logging for production
+    if (process.env.NODE_ENV === 'production') {
+      console.log('Login successful for user:', user.username);
+      console.log('Client URL:', process.env.CLIENT_URL);
+      console.log('Response headers:', res.getHeaders());
+    }
+    
     res.status(200).json({ message: 'User logged in successfully', data: userWithoutPassword });
   } catch (err) {
     console.error(err.message);
@@ -95,16 +103,11 @@ exports.login = async (req, res) => {
 }; 
 
 exports.logout = async (req, res) => {
-  // Determine if we're in production
-  const isProduction = process.env.NODE_ENV === 'production';
-  const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
-  const isLocalhost = clientUrl.includes('localhost') || clientUrl.includes('127.0.0.1');
-
   res.cookie('token', '', {
     httpOnly: true,
     expires: new Date(0),
-    secure: isProduction && !isLocalhost,
-    sameSite: isProduction && !isLocalhost ? 'none' : 'lax'
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
   });
   
   res.json({ success: true, msg: 'Logged out successfully' });

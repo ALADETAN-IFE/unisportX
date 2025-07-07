@@ -16,8 +16,9 @@ const app = express();
 
 // Init Middleware
 
-corsOptions = {
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
+// Configure CORS for multiple environments
+const corsOptions = {
+  origin: process.env.CLIENT_URL || 'http://localhost:3000',
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     exposedHeaders: ['Set-Cookie']
