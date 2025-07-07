@@ -17,9 +17,9 @@ interface ModeProps {
 }
 
 const Header = ({darkMode, setDarkMode}: ModeProps) => {
-  // const [user, setUser] = useState<User | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isLoggingOut, setisLoggingOut] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -62,19 +62,28 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
     setShowLogoutConfirm(true);
   };
 
+  const clearToken = () => {
+    document.cookie = `token=; expires=Thu, 01, Jan 1970 00:00:00UTC; path=/;`
+  }
+
   const handleLogout = async () => {
     try {
+      setisLoggingOut(true)
       await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/logout`, {}, {
         withCredentials: true
       });
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      toast.success("You have logged out successfully")
       dispatch(logOut());
+      clearToken()
       setMobileMenuOpen(false);
       setShowLogoutConfirm(false);
-      navigate('/');
+      toast.success("You have logged out successfully")
+      setisLoggingOut(false)
+      setTimeout(() => {
+        navigate('/');
+      }, 1200);
     }
   };
 
@@ -269,6 +278,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
         isOpen={showLogoutConfirm}
         onClose={closeLogoutConfirm}
         onConfirm={handleLogout}
+        isLoggingOut={isLoggingOut}
       />
     </header>
   );

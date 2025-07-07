@@ -14,6 +14,9 @@ exports.signup = async (req, res) => {
     if (user) {
       return res.status(400).json({ message: 'The email already exists' });
     }
+    if (user) {
+      return res.status(400).json({ message: 'The email already exists' });
+    }
 
     // Generate verification token
     const verificationToken = crypto.randomBytes(32).toString('hex');
