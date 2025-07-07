@@ -5,6 +5,8 @@ import axios from 'axios';
 import { features, testimonials } from "../utils/datas"
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../global/Redux-Store/Store';
 
 interface IVideo {
   _id: string;
@@ -17,7 +19,8 @@ interface IVideo {
 const Home = () => {
   const [videos, setVideos] = useState<IVideo[]>([]);
   const [loadingVideos, setLoadingVideos] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn } = useSelector((state: RootState) => state.uniSportX);
+
 
   // Refs for intersection observer
   const heroRef = useRef(null);
@@ -34,9 +37,7 @@ const Home = () => {
   const ctaInView = useInView(ctaRef, { once: true, amount: 0.3 });
 
   useEffect(() => {
-    // Check if user is logged in
-    const userData = localStorage.getItem('user');
-    setIsLoggedIn(!!userData);
+
 
     // Fetch videos (only 3 for non-logged in users)
     const fetchVideos = async () => {
@@ -44,8 +45,8 @@ const Home = () => {
         setLoadingVideos(true)
         const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/videos/get-videos`);
         const allVideos = res.data;
-        // Show only 3 videos for non-logged in users
-        setVideos(isLoggedIn ? allVideos : allVideos.slice(0, 3));
+        // Show only 3 videos
+        setVideos(allVideos.slice(0, 3));
       } catch (err) {
         console.error('Error fetching videos:', err);
       } finally{
@@ -205,7 +206,7 @@ const Home = () => {
                 ) : (
                   <div className="text-center py-12">
                     <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">No videos available yet. Be the first to upload!</p>
-                    <Link to={isLoggedIn ? "/app/videos" : "/signupsignup"}>
+                    <Link to={isLoggedIn ? "/app/videos" : "/signup"}>
                     <button className="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 transition duration-300">
                       {isLoggedIn ? "Upload" : "Join UnisportX to Upload a Video"}
                     </button>
