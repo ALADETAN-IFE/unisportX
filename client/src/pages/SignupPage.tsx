@@ -5,6 +5,7 @@ import axios from 'axios';
 // import { useDispatch } from 'react-redux';
 // import { login as reduxLogin } from '../utils/user';
 import { toast } from 'react-toastify';
+import SEO from '../components/SEO';
 
 const SignupPage = () => {
   const [username, setUsername] = useState('');
@@ -53,7 +54,21 @@ const SignupPage = () => {
   };
 
   return (
-    <motion.div 
+    <>
+      <SEO 
+        title="Sign Up"
+        description="Join UniSportX today! Create your account to share university sports highlights, connect with athletes and fans, and be part of the ultimate university sports community."
+        keywords="sign up, register, university sports, sports platform, athletic community, student registration, join sports community"
+        url="/signup"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Sign Up - UniSportX",
+          "description": "Create your UniSportX account",
+          "url": "https://unisport-x.vercel.app/signup"
+        }}
+      />
+      <motion.div 
       className="container mx-auto p-8 flex justify-center"
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -148,6 +163,7 @@ const SignupPage = () => {
         </form>
       </div>
     </motion.div>
+    </>
   );
 };
 

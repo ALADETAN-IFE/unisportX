@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { login as reduxLogin } from '../utils/user';
 import { toast } from 'react-toastify';
 import ResendVerification from '../components/ResendVerification';
+import SEO from '../components/SEO';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -71,6 +72,19 @@ const LoginPage = () => {
 
   return (
     <>
+      <SEO 
+        title="Login"
+        description="Sign in to your UniSportX account to access university sports highlights, share your athletic moments, and connect with the university sports community."
+        keywords="login, sign in, university sports, sports platform, athletic community, student login"
+        url="/login"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Login - UniSportX",
+          "description": "Sign in to your UniSportX account",
+          "url": "https://unisport-x.vercel.app/login"
+        }}
+      />
       <motion.div 
         className="container mx-auto p-8 flex justify-center"
         initial={{ opacity: 0, scale: 0.95 }}

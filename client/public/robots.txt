@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://unisportx.onrender.com/sitemap.xml
+
+# Disallow private areas
+Disallow: /app/
+Disallow: /api/
+Disallow: /admin/
+
+# Allow important pages
+Allow: /login
+Allow: /signup
+Allow: /privacy
+Allow: /terms
+Allow: /forgot-password
+
+# Crawl delay (optional)
+Crawl-delay: 1 

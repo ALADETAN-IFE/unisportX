@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import UploadForm from '../components/UploadForm';
 import VideoGrid from '../components/VideoGrid';
+import SEO from '../components/SEO';
 
 const VideosPage = () => {
   const [loading, setLoading] = useState(true);
@@ -21,7 +22,22 @@ const VideosPage = () => {
     );
   }
   return (
-    <div className="container mx-auto p-4 flex justify-center">
+    <>
+      <SEO 
+        title="Videos"
+        description="Watch and upload university sports highlights on UniSportX. Browse through the latest athletic moments, share your own videos, and connect with the university sports community."
+        keywords="university sports videos, sports highlights, athletic videos, campus sports, student athletes, sports upload, video sharing"
+        url="/app/videos"
+        type="video"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "VideoGallery",
+          "name": "UniSportX Videos",
+          "description": "University sports highlights and videos",
+          "url": "https://unisport-x.vercel.app/app/videos"
+        }}
+      />
+      <div className="container mx-auto p-4 flex justify-center">
       {/* Navigation Cards */}
       {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <Link
@@ -65,6 +81,7 @@ const VideosPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import CreatePost from '../components/CreatePost';
 import PostCard from '../components/PostCard';
+import SEO from '../components/SEO';
 
 interface Post {
   _id: string;
@@ -130,8 +131,22 @@ const FeedPage = () => {
   }
 
   return (
-    // <div className="container mx-auto p-4 max-w-4xl">
-    <div className="container mx-auto p-4 space-x-4 lg:max-w-4xl ">
+    <>
+      <SEO 
+        title="Feed"
+        description="Connect with the UniSportX community through posts, share your sports moments, achievements, and training updates. Join the conversation with fellow athletes and sports enthusiasts."
+        keywords="sports feed, athletic community, sports posts, university sports social, athlete updates, sports sharing, community posts"
+        url="/app"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "SocialMediaPosting",
+          "name": "UniSportX Feed",
+          "description": "University sports community feed",
+          "url": "https://unisport-x.vercel.app/app"
+        }}
+      />
+      {/* <div className="container mx-auto p-4 max-w-4xl"> */}
+      <div className="container mx-auto p-4 space-x-4 lg:max-w-4xl ">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -220,6 +235,7 @@ const FeedPage = () => {
         )}
       </motion.div>
     </div>
+    </>
   );
 };
 

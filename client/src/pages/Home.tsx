@@ -4,6 +4,7 @@ import { motion, useInView } from 'motion/react';
 import axios from 'axios';
 import { features, testimonials } from "../utils/datas"
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 interface IVideo {
   _id: string;
@@ -61,7 +62,26 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <>
+      <SEO 
+        title="Home"
+        description="Welcome to UniSportX - The ultimate platform for sharing and watching university sports highlights. Connect with athletes and fans, celebrate victories, and enjoy the action together."
+        keywords="university sports platform, sports highlights, student athletes, campus sports, athletic community, sports videos, university sports sharing"
+        url="/"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "UniSportX Home",
+          "description": "University sports highlights and community platform",
+          "url": "https://unisport-x.vercel.app/",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "UniSportX",
+            "description": "University sports community platform"
+          }
+        }}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16">
         <motion.div 
@@ -259,6 +279,7 @@ const Home = () => {
       </div>
       <Footer />
     </div>
+    </>
   );
 };
 
