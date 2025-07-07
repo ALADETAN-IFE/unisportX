@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../global/Redux-Store/Store';
 import EditPost from './EditPost';
 import DeletePostConfirm from './DeletePostConfirm';
+import Comment from '../components/Comment';
+
 
 interface Post {
   _id: string;
@@ -56,6 +58,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
   const [commentLoading, setCommentLoading] = useState(false);
   const [localPost, setLocalPost] = useState(post);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const user = useSelector((state: RootState) => state.uniSportX.userData);
 
@@ -183,6 +186,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
 
   const handleDeleteComment = async (commentId: string) => {
     try {
+      setIsDeleting(true)
       await axios.delete(`${import.meta.env.VITE_SERVER_URL}/posts/${post._id}/comments/${commentId}`, {
         withCredentials: true
       });
@@ -197,6 +201,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
       } else {
         toast.error('Something went wrong');
       }
+    } finally {
+      setIsDeleting(false)
     }
   };
 
@@ -477,34 +483,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
             ) : (
               <div className="space-y-3">
                 {localPost.comments.map((comment) => (
-                  <div key={comment._id} className="flex space-x-3">
-                    <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-sm font-bold">
-                      {comment.user.username.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="flex-1">
-                      <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
-                        <div className="flex items-center justify-between">
-                          <span className="font-semibold text-sm text-gray-900 dark:text-white">
-                            {comment.user.username}
-                          </span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatDate(comment.createdAt)}
-                          </span>
-                        </div>
-                        <p className="text-gray-800 dark:text-gray-200 text-sm mt-1">
-                          {comment.content}
-                        </p>
-                      </div>
-                      {user?._id === comment.user._id && (
-                        <button
-                          onClick={() => handleDeleteComment(comment._id)}
-                          className="text-xs text-red-500 hover:text-red-700 mt-1"
-                        >
-                          Delete
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                  <Comment comment={comment}/>
                 ))}
               </div>
             )}
