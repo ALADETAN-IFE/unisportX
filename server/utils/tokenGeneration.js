@@ -21,7 +21,7 @@ exports.generateToken = (user, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         sameSite: 'strict',
         // sameSite: isProduction && !isLocalhost ? 'none' : 'lax', // Use 'none' for cross-domain in production
-        domain: isProduction && !isLocalhost ? undefined : undefined // Let browser handle domain
+        // domain: isProduction && !isLocalhost ? undefined : undefined // Let browser handle domain
     });
 
     return token;

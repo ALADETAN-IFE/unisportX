@@ -87,14 +87,7 @@ exports.login = async (req, res) => {
    generateToken(user, res)
 
     const { password: _, ...userWithoutPassword } = user._doc;
-    
-    // Debug logging for production
-    if (process.env.NODE_ENV === 'production') {
-      console.log('Login successful for user:', user.username);
-      console.log('Client URL:', process.env.CLIENT_URL);
-      console.log('Response headers:', res.getHeaders());
-    }
-    
+        
     res.status(200).json({ message: 'User logged in successfully', data: userWithoutPassword });
   } catch (err) {
     console.error(err.message);
@@ -124,7 +117,7 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
     
     if (!user) {
-      return res.status(404).json({ message: 'User with this email does not exist' });
+      return res.status(200).json({ message: 'If your email is in our system, you will receive a reset link' });
     }
 
     // Generate reset token
@@ -141,20 +134,20 @@ exports.forgotPassword = async (req, res) => {
     
     const emailSent = await sendPasswordResetEmail(email, user.username, resetUrl);
     
-    if (emailSent) {
-      res.status(200).json({ 
-        message: 'Password reset link sent to your email',
-        success: true
-      });
-    } else {
-      res.status(500).json({ 
+    if (!emailSent) {
+      return res.status(500).json({ 
         message: 'Failed to send password reset email. Please try again.',
         success: false
       });
-    }
+    } 
+    
+    return res.status(200).json({ 
+      message: 'If your email is in our system, you will receive a reset link',
+      success: true
+    });
 
   } catch (err) {
-    console.error(err.message);
+    console.error('Forgot password error:', err.message)
     res.status(500).json({ message: 'Something went wrong' });
   }
 };

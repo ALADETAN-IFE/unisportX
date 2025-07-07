@@ -22,7 +22,7 @@ const ForgotPasswordPage = () => {
 
       if (response.data.success) {
         setSuccess(true);
-        toast.success("Password reset link sent to your email!");
+        toast.success(response.data.message);
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -57,8 +57,8 @@ const ForgotPasswordPage = () => {
             <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Check Your Email</h2>
             
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              We've sent a password reset link to <strong>{email}</strong>. 
-              Please check your email and click the link to reset your password.
+              If an account exists for <strong>{email}</strong>, you will receive a reset link.
+              Please check your inbox and spam folder
             </p>
             
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
