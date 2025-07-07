@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
 
 interface SEOProps {
   title?: string;
@@ -26,45 +25,79 @@ const SEO: React.FC<SEOProps> = ({
   useEffect(() => {
     // Update document title
     document.title = fullTitle;
-  }, [fullTitle]);
 
-  return (
-    <Helmet>
-      {/* Primary Meta Tags */}
-      <title>{fullTitle}</title>
-      <meta name="title" content={fullTitle} />
-      <meta name="description" content={description} />
-      <meta name="keywords" content={keywords} />
+    // Update or create meta tags
+    const updateMetaTag = (name: string, content: string, property?: string) => {
+      const selector = property ? `meta[property="${property}"]` : `meta[name="${name}"]`;
+      let meta = document.querySelector(selector) as HTMLMetaElement;
       
-      {/* Open Graph / Facebook */}
-      <meta property="og:type" content={type} />
-      <meta property="og:url" content={fullUrl} />
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={image} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content="UniSportX" />
-      <meta property="og:locale" content="en_US" />
-      
-      {/* Twitter */}
-      <meta property="twitter:card" content="summary_large_image" />
-      <meta property="twitter:url" content={fullUrl} />
-      <meta property="twitter:title" content={fullTitle} />
-      <meta property="twitter:description" content={description} />
-      <meta property="twitter:image" content={image} />
-      
-      {/* Canonical URL */}
-      <link rel="canonical" href={fullUrl} />
-      
-      {/* Structured Data */}
-      {structuredData && (
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
-        </script>
-      )}
-    </Helmet>
-  );
+      if (!meta) {
+        meta = document.createElement('meta');
+        if (property) {
+          meta.setAttribute('property', property);
+        } else {
+          meta.setAttribute('name', name);
+        }
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    // Update primary meta tags
+    updateMetaTag('title', fullTitle);
+    updateMetaTag('description', description);
+    updateMetaTag('keywords', keywords);
+
+    // Update Open Graph tags
+    updateMetaTag('og:type', type, 'og:type');
+    updateMetaTag('og:url', fullUrl, 'og:url');
+    updateMetaTag('og:title', fullTitle, 'og:title');
+    updateMetaTag('og:description', description, 'og:description');
+    updateMetaTag('og:image', image, 'og:image');
+    updateMetaTag('og:image:width', '1200', 'og:image:width');
+    updateMetaTag('og:image:height', '630', 'og:image:height');
+    updateMetaTag('og:site_name', 'UniSportX', 'og:site_name');
+    updateMetaTag('og:locale', 'en_US', 'og:locale');
+
+    // Update Twitter tags
+    updateMetaTag('twitter:card', 'summary_large_image', 'twitter:card');
+    updateMetaTag('twitter:url', fullUrl, 'twitter:url');
+    updateMetaTag('twitter:title', fullTitle, 'twitter:title');
+    updateMetaTag('twitter:description', description, 'twitter:description');
+    updateMetaTag('twitter:image', image, 'twitter:image');
+
+    // Update canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', fullUrl);
+
+    // Add structured data
+    if (structuredData) {
+      // Remove existing structured data
+      const existingScript = document.querySelector('script[type="application/ld+json"]');
+      if (existingScript) {
+        existingScript.remove();
+      }
+
+      // Add new structured data
+      const script = document.createElement('script');
+      script.setAttribute('type', 'application/ld+json');
+      script.textContent = JSON.stringify(structuredData);
+      document.head.appendChild(script);
+    }
+
+    // Cleanup function
+    return () => {
+      // Reset to default values when component unmounts
+      document.title = 'UniSportX - University Sports Highlights & Community Platform';
+    };
+  }, [fullTitle, description, keywords, fullUrl, image, type, structuredData]);
+
+  return null; // This component doesn't render anything
 };
 
 export default SEO; 
