@@ -483,7 +483,14 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
             ) : (
               <div className="space-y-3">
                 {localPost.comments.map((comment) => (
-                  <Comment comment={comment}/>
+                  <Comment
+                    key={comment._id}
+                    comment={comment}
+                    user={user!}
+                    isDeleting={isDeleting}
+                    handleDeleteComment={handleDeleteComment}
+                    formatDate={formatDate}
+                  />
                 ))}
               </div>
             )}
