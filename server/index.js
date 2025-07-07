@@ -18,7 +18,9 @@ const app = express();
 
 corsOptions = {
     origin: process.env.CLIENT_URL || 'http://localhost:3000',
-    credentials: true
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    exposedHeaders: ['Set-Cookie']
 }
 
 app.use(cors(corsOptions));

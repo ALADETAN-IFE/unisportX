@@ -95,11 +95,16 @@ exports.login = async (req, res) => {
 }; 
 
 exports.logout = async (req, res) => {
+  // Determine if we're in production
+  const isProduction = process.env.NODE_ENV === 'production';
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+  const isLocalhost = clientUrl.includes('localhost') || clientUrl.includes('127.0.0.1');
+
   res.cookie('token', '', {
     httpOnly: true,
     expires: new Date(0),
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
+    secure: isProduction && !isLocalhost,
+    sameSite: isProduction && !isLocalhost ? 'none' : 'lax'
   });
   
   res.json({ success: true, msg: 'Logged out successfully' });
