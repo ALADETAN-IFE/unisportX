@@ -205,9 +205,9 @@ const Home = () => {
                 ) : (
                   <div className="text-center py-12">
                     <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">No videos available yet. Be the first to upload!</p>
-                    <Link to="/signup">
+                    <Link to={isLoggedIn ? "/app/videos" : "/signupsignup"}>
                     <button className="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 transition duration-300">
-                      Join UnisportX to Upload a Video
+                      {isLoggedIn ? "Upload" : "Join UnisportX to Upload a Video"}
                     </button>
               </Link>
                   </div>
