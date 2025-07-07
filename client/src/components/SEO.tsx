@@ -16,12 +16,12 @@ const SEO: React.FC<SEOProps> = ({
   description = 'Share and watch university sports highlights, connect with athletes and fans, and celebrate victories together. Join the ultimate university sports community platform.',
   keywords = 'university sports, sports highlights, student athletes, university community, sports videos, campus sports, athletic highlights, university sports platform',
   image = 'http://res.cloudinary.com/dserpv6p5/image/upload/v1750828847/elkerqp2puqenfu1b5bi.png',
-  url = 'https://unisportx.com/',
+  url = 'https://unisport-x.vercel.app/',
   type = 'website',
   structuredData
 }) => {
   const fullTitle = title.includes('UniSportX') ? title : `${title} | UniSportX`;
-  const fullUrl = url.startsWith('http') ? url : `https://unisportx.com${url}`;
+  const fullUrl = url.startsWith('http') ? url : `https://unisport-x.vercel.app${url}`;
 
   useEffect(() => {
     // Update document title

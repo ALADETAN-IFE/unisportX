@@ -9,9 +9,9 @@ import { HelmetProvider } from 'react-helmet-async';
 const App = () => {
   return (
     <HelmetProvider>
-      <InstallPrompt />
-      <RouterProvider router={Routes} />
-      <ToastContainer position='top-right' autoClose={2800} />
+    <InstallPrompt />
+    <RouterProvider router={Routes} />
+    <ToastContainer position='top-right' autoClose={2800} />
     </HelmetProvider>
   )
 }
