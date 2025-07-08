@@ -7,45 +7,7 @@ import type { RootState } from '../global/Redux-Store/Store';
 import EditPost from './EditPost';
 import DeletePostConfirm from './DeletePostConfirm';
 import Comment from '../components/Comment';
-
-
-interface Post {
-  _id: string;
-  author: {
-    _id: string;
-    username: string;
-    email: string;
-  };
-  content: string;
-  images: Array<{
-    public_id: string;
-    url: string;
-    width: number;
-    height: number;
-  }>;
-  likes: Array<{
-    _id: string;
-    user: {
-      _id: string;
-      username: string;
-    };
-    type: string;
-  }>;
-  comments: Array<{
-    _id: string;
-    user: {
-      _id: string;
-      username: string;
-    };
-    content: string;
-    createdAt: string;
-  }>;
-  tags: string[];
-  category: string;
-  createdAt: string;
-  likeCount: number;
-  commentCount: number;
-}
+import type { Post } from '../interface'
 
 interface PostCardProps {
   post: Post;
@@ -259,7 +221,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                {post.author.username}
+                {post.author.username.charAt(0).toUpperCase() + post.author.username.slice(1)}
               </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {formatDate(localPost.createdAt)} • {localPost.category}

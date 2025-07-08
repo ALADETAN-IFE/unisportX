@@ -126,27 +126,27 @@ const generateVerificationEmailHTML = (username, verificationUrl) => {
 
 const generateVerificationEmailText = (username, verificationUrl) => {
   return `
-Verify Your Email Address - UniSportX
+Verify Your Email Address - UniSportX \n\n
 
-Hi ${username},
+Hi ${username},\n\n
 
-Welcome to UniSportX! 🎉 We're excited to have you join our community of university sports enthusiasts.
+Welcome to UniSportX! 🎉 We're excited to have you join our community of university sports enthusiasts.\n\n
 
 To complete your registration and start sharing your sports content, please verify your email address by visiting this link:
+\n\n
+${verificationUrl}\n\n
 
-${verificationUrl}
+IMPORTANT: This verification link will expire in 24 hours for security reasons.\n\n
 
-IMPORTANT: This verification link will expire in 24 hours for security reasons.
+Once verified, you'll be able to:\n
+- Upload and share your sports videos\n
+- Connect with other university athletes\n
+- Discover amazing sports content\n
+- Build your sports community\n\n
 
-Once verified, you'll be able to:
-- Upload and share your sports videos
-- Connect with other university athletes
-- Discover amazing sports content
-- Build your sports community
+If you didn't create an account with UniSportX, you can safely ignore this email.\n\n
 
-If you didn't create an account with UniSportX, you can safely ignore this email.
-
-Need help? Contact us at support@unisportx.com
+Need help? Contact us at support@unisportx.com\n\n
 
 © 2024 UniSportX. All rights reserved.
   `;

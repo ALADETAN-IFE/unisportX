@@ -92,20 +92,20 @@ const Home = () => {
           animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
-          <h1 className="text-6xl font-bold mb-6 text-gray-800 dark:text-white">
+          <h1 className="text-3xl md:text-6xl font-bold mb-6 text-gray-800 dark:text-white">
             Welcome to <span className="text-blue-600 dark:text-blue-400">UniSportX</span>
           </h1>
-          <p className="text-xl mb-8 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-base md:text-xl mb-8 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             The ultimate platform for sharing and watching your university's sports highlights and moments. Whether you're an athlete, a fan, or just part of the university community, join in to connect, celebrate victories, and enjoy the action together.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Link to="/signup">
-              <button className="bg-blue-600 text-white font-bold py-4 px-8 rounded-full hover:bg-blue-700 transition duration-300 text-lg">
+              <button className="bg-blue-600 text-white font-bold py-2 px-4 md:py-4 md:px-8 rounded-full hover:bg-blue-700 transition duration-300 text-base md:text-lg">
                 Get Started Free
           </button>
         </Link>
         <Link to="/login">
-              <button className="bg-white text-blue-600 font-bold py-4 px-8 rounded-full hover:bg-gray-50 transition duration-300 text-lg border-2 border-blue-600">
+              <button className="bg-white text-blue-600 font-bold py-2 px-4 md:py-4 md:px-8 rounded-full hover:bg-gray-50 transition duration-300 text-base md:text-lg border-2 border-blue-600">
                 Sign In
               </button>
             </Link>
@@ -120,7 +120,7 @@ const Home = () => {
           animate={featuresInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
         >
-          <h2 className="text-4xl font-bold text-center mb-12 text-gray-800 dark:text-white">
+          <h2 className="text-2xl md:text-4xl font-bold text-center mb-12 text-gray-800 dark:text-white">
             Why Choose UniSportX?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
@@ -149,10 +149,10 @@ const Home = () => {
           transition={{ duration: 0.7, delay: 0.4 }}
         >
           <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold mb-4 text-gray-800 dark:text-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800 dark:text-white">
               Latest Sports Highlights
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300">
               {isLoggedIn ? "Check out the latest videos from our community" : "Preview our latest videos (Sign up to see more!)"}
             </p>
           </div>
@@ -205,9 +205,9 @@ const Home = () => {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <p className="text-gray-600 dark:text-gray-400 text-lg mb-3">No videos available yet. Be the first to upload!</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-base md:text-lg mb-3">No videos available yet. Be the first to upload!</p>
                     <Link to={isLoggedIn ? "/app/videos" : "/signup"}>
-                    <button className="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 transition duration-300">
+                    <button className="mt-3 md:mt-0 bg-blue-600 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-full hover:bg-blue-700 transition duration-300">
                       {isLoggedIn ? "Upload" : "Join UnisportX to Upload a Video"}
                     </button>
               </Link>
@@ -221,7 +221,7 @@ const Home = () => {
           {!isLoggedIn && videos.length > 0 && (
             <div className="text-center mt-8">
               <Link to="/signup">
-                <button className="bg-blue-600 text-white font-bold py-3 px-6 rounded-full hover:bg-blue-700 transition duration-300">
+                <button className="bg-blue-600 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-full hover:bg-blue-700 transition duration-300">
                   Sign Up to See More Videos
                 </button>
               </Link>
@@ -237,7 +237,7 @@ const Home = () => {
           animate={testimonialsInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.6 }}
         >
-          <h2 className="text-4xl font-bold text-center mb-12 text-gray-800 dark:text-white">
+          <h2 className="text-2xl md:text-4xl font-bold text-center mb-12 text-gray-800 dark:text-white">
             What Our Users Say
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -262,17 +262,17 @@ const Home = () => {
         {/* CTA Section */}
         <motion.div 
           ref={ctaRef}
-          className="text-center bg-blue-600 dark:bg-blue-700 rounded-2xl p-12 text-white"
+          className="text-center bg-blue-600 dark:bg-blue-700 rounded-2xl p-6 md:p-12 text-white"
           initial={{ opacity: 0, y: 50 }}
           animate={ctaInView ? { opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.8 }}
         >
-          <h2 className="text-4xl font-bold mb-4">Ready to Join the Community?</h2>
-          <p className="text-xl mb-8 opacity-90">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Join the Community?</h2>
+          <p className="text-lg md:text-xl mb-8 opacity-90">
             Start sharing your sports highlights and connect with fellow athletes today!
           </p>
           <Link to="/signup">
-            <button className="bg-white text-blue-600 font-bold py-4 px-8 rounded-full hover:bg-gray-100 transition duration-300 text-lg">
+            <button className="bg-white text-blue-600 font-semibold md:font-bold py-2 px-4 md:py-4 md:px-8 rounded-full hover:bg-gray-100 transition duration-300 text-base md:text-lg">
               Create Your Account
           </button>
         </Link>

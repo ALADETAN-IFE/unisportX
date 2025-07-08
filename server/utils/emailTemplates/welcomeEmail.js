@@ -103,20 +103,20 @@ function generateWelcomeEmailHTML(userName, videosUrl) {
 function generateWelcomeEmailText(userName, videosUrl) {
   return `
   Welcome to UniSportX, ${userName}!
-  
+  \n\n
   Thank you for joining our community of athletes and sports enthusiasts. Here's what you can do:
+  \n\n
+  • Upload and share your sports videos\n
+  • Connect with other athletes\n
+  • Track your sports journey\n
+  • Join the sports community\n
+  \n
+  Get started: ${videosUrl}\n\n
   
-  • Upload and share your sports videos
-  • Connect with other athletes
-  • Track your sports journey
-  • Join the sports community
+  Need help? Contact us at support@unisportx.vercel.app\n
   
-  Get started: ${videosUrl}
-  
-  Need help? Contact us at support@unisportx.com
-  
-  Best regards,
-  The UniSportX Team
+  Best regards,\n
+  The UniSportX Team\n\n
   
   © ${new Date().getFullYear()} UniSportX. All rights reserved.
   `;

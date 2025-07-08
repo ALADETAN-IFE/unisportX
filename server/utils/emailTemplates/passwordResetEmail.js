@@ -96,20 +96,20 @@ function generatePasswordResetEmailHTML(username, resetUrl) {
 
 function generatePasswordResetEmailText(username, resetUrl) {
   return `
-  UniSportX Password Reset
+  UniSportX Password Reset\n\n
   
-  Hello ${username},
+  Hello ${username},\n\n
   
-  We received a request to reset your password. Click the link below (expires in 1 hour):
+  We received a request to reset your password. Click the link below (expires in 1 hour):\n\n
   
-  ${resetUrl}
+  ${resetUrl}\n\n
   
-  For security reasons:
-  - Do not share this link with anyone
-  - The link will expire after 60 minutes
-  - If you didn't request this, please ignore this email
+  For security reasons:\n
+  - Do not share this link with anyone\n
+  - The link will expire after 60 minutes\n
+  - If you didn't request this, please ignore this email\n\n
   
-  Need help? Contact our support team.
+  Need help? Contact our support team.\n\n
   
   © ${new Date().getFullYear()} UniSportX. All rights reserved.
   `;

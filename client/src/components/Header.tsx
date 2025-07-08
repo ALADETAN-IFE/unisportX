@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 // import { motion } from 'framer-motion';
 import { motion } from 'motion/react';
@@ -20,7 +20,6 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setisLoggingOut] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const { isLoggedIn, userData } = useSelector((state: RootState) => state.uniSportX);
@@ -62,8 +61,17 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
     setShowLogoutConfirm(true);
   };
 
-  const clearToken = () => {
-    document.cookie = `token=; expires=Thu, 01, Jan 1970 00:00:00UTC; path=/;`
+  const getToken = () => {
+    const cookies = document.cookie.split('; ');
+    const tokenCookie = cookies.find(cookie => cookie.startsWith("token="));
+    return tokenCookie ? tokenCookie.split('=')[1] : `null ${cookies} hello ${document.cookie}`;
+  }
+  
+  const token = getToken();
+  if (token) {
+    console.log('Token is available:', token);
+  } else {
+    console.log('Token is not available', token);
   }
 
   const handleLogout = async () => {
@@ -76,14 +84,10 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
       console.error('Logout error:', error);
     } finally {
       dispatch(logOut());
-      clearToken()
       setMobileMenuOpen(false);
       setShowLogoutConfirm(false);
       toast.success("You have logged out successfully")
       setisLoggingOut(false)
-      setTimeout(() => {
-        navigate('/');
-      }, 1200);
     }
   };
 
@@ -112,7 +116,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
             {isLoggedIn ? (
               <>
                 <span className="text-gray-700 dark:text-gray-300 text-sm">
-                  Welcome, {userData?.username}
+                  Welcome, {userData?.username.charAt(0).toUpperCase()}{userData?.username.slice(1)}
                 </span>
                 {location.pathname !== '/app/videos' && (
                   <Link 
@@ -221,7 +225,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
               {isLoggedIn ? (
                 <>
                   <span className="text-gray-700 dark:text-gray-300 text-sm px-2">
-                    Welcome, {userData?.username}
+                    Welcome,  {userData?.username.charAt(0).toUpperCase()}{userData?.username.slice(1)}
                   </span>
                   {location.pathname !== '/app/videos' && (
                     <Link 

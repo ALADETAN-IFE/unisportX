@@ -1,48 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import CreatePost from '../components/CreatePost';
 import PostCard from '../components/PostCard';
 import SEO from '../components/SEO';
-
-interface Post {
-  _id: string;
-  author: {
-    _id: string;
-    username: string;
-    email: string;
-  };
-  content: string;
-  images: Array<{
-    public_id: string;
-    url: string;
-    width: number;
-    height: number;
-  }>;
-  likes: Array<{
-    _id: string;
-    user: {
-      _id: string;
-      username: string;
-    };
-    type: string;
-  }>;
-  comments: Array<{
-    _id: string;
-    user: {
-      _id: string;
-      username: string;
-    };
-    content: string;
-    createdAt: string;
-  }>;
-  tags: string[];
-  category: string;
-  createdAt: string;
-  likeCount: number;
-  commentCount: number;
-}
+import type { Post } from '../interface'
 
 const FeedPage = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -82,9 +44,9 @@ const FeedPage = () => {
       if (axios.isAxiosError(error)) {
         console.error('Error fetching posts:', error);
         const errorMessage = error.response?.data?.message || 'Error fetching posts';
-        toast.error(errorMessage);
+        console.error('Error fetching posts:', errorMessage);
       } else {
-        toast.error('Something went wrong');
+        console.error('Something went wrong');
       }
     } finally {
       setLoading(false);

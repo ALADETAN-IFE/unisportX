@@ -23,7 +23,7 @@ exports.signup = async (req, res) => {
     const verificationTokenExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours from now
 
     user = new User({
-      username,
+      username: username.toLowerCase(),
       email,
       password,
       verificationToken,
@@ -65,7 +65,7 @@ exports.login = async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    const payload = username ? { username } : { email };
+    const payload = username ? { username: username.toLowerCase() } : { email: email.toLowerCase() };
     if (!payload.username && !payload.email) {
       return res.status(400).json({ message: 'Username or email is required' });
     }
@@ -97,6 +97,19 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Something went wrong' });
   }
 }; 
+
+exports.check = async (req, res) => {
+  const token = req.cookies.token;
+  if (!token) return res.status(401).json({ authenticated: false });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // res.status(200).json({ authenticated: true, user: decoded.user });
+    res.status(200).json({ authenticated: true});
+  } catch (err) {
+    res.status(401).json({ authenticated: false });
+  }
+}
 
 exports.logout = async (req, res) => {
   res.cookie('token', '', {
