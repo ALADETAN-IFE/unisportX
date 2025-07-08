@@ -109,7 +109,7 @@ exports.getPosts = async (req, res) => {
 
     const posts = await Post.find(query)
       .populate('author', 'username email profilePicture')
-      .populate('comments.user', 'username')
+      .populate('comments.user', 'username profilePicture')
       .populate('likes.user', 'username')
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)

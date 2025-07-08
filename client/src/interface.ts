@@ -34,6 +34,7 @@ export interface Post {
       _id: string;
       username: string;
     };
+    profilePicture?: string;
     content: string;
     createdAt: string;
   }>;

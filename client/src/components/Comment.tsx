@@ -4,6 +4,7 @@ interface Comment {
       _id: string;
       username: string;
     };
+    profilePicture?: string;
     content: string;
     createdAt: string;
 }
@@ -20,7 +21,12 @@ const Comment = ({ comment, user, isDeleting, handleDeleteComment, formatDate }:
     return (
         <div key={comment._id} className="flex space-x-3">
                     <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-sm font-bold">
-                      {comment.user.username.charAt(0).toUpperCase()}
+                      
+                      {
+                comment?.profilePicture ? (
+                    <img src={comment?.profilePicture} alt={comment.user.username.charAt(0).toUpperCase()}/>
+                ): `${comment.user.username.charAt(0).toUpperCase()}`
+              }
                     </div>
                     <div className="flex-1">
                       <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-3">
