@@ -19,8 +19,8 @@ exports.generateToken = (user, res) => {
         httpOnly: true,
         secure:  process.env.NODE_ENV === 'production', 
         maxAge: 60 * 60 * 24 * 7 * 1000, // 7 days
-        // sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'strict',
-        sameSite: 'strict',
+        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'strict',
+        // sameSite: 'strict',
         path: '/',
         // sameSite: isProduction && !isLocalhost ? 'none' : 'lax', // Use 'none' for cross-domain in production
         // domain: isProduction && !isLocalhost ? undefined : undefined // Let browser handle domain
