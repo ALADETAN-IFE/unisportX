@@ -217,7 +217,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-              {post.author.username.charAt(0).toUpperCase()}
+              {
+                post.author?.profilePicture ? (
+                    <img src={user?.profilePicture} alt={post.author.username.charAt(0).toUpperCase()}/>
+                ): `${post.author.username.charAt(0).toUpperCase()}`
+              }
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 dark:text-white">

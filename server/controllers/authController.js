@@ -1,8 +1,12 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { generateToken } = require("../utils/tokenGeneration")
 const crypto = require('crypto');
 const { sendWelcomeEmail, sendPasswordResetEmail, sendVerificationEmail } = require('../lib/mail');
+const { OAuth2Client } = require("google-auth-library");
+
+const client = new OAuth2Client(process.env.CLIENT_ID);
 
 exports.signup = async (req, res) => {
   const { username, email, password } = req.body;
@@ -97,6 +101,73 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Something went wrong' });
   }
 }; 
+
+exports.googleAuth = async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ success: false, message: 'Token is required' });
+  }
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture, sub: googleId } = payload;
+
+    // Check if user already exists
+    let user = await User.findOne({ email });
+    let existingName = await User.findOne({ username: name });
+
+    if (!user) {
+      // Create new user
+      const username = existingName ? name.toLowerCase().replace(/\s+/g, '') : name.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 1000);
+      console.log("name", name)
+      console.log("existingName", existingName)
+      user = new User({
+        username,
+        email,
+        googleId,
+        profilePicture: picture,
+        isVerified: true, // Google users are pre-verified
+        password: crypto.randomBytes(32).toString('hex') // Random password for Google users
+      });
+
+      await user.save();
+    } else {
+      // Update existing user with Google ID if not present
+      if (!user.googleId) {
+        user.googleId = googleId;
+        user.isVerified = true;
+        if (picture && !user.profilePicture) {
+          user.profilePicture = picture;
+        }
+        await user.save();
+      }
+    }
+
+    // Generate JWT token and set cookie
+    generateToken(user, res);
+
+    const { password: _, ...userWithoutPassword } = user._doc;
+
+    res.status(200).json({
+      success: true,
+      message: 'Google authentication successful',
+      data: userWithoutPassword
+    });
+
+  } catch (err) {
+    console.error('Google auth error:', err);
+    res.status(401).json({ 
+      success: false, 
+      message: 'Invalid Google token or authentication failed' 
+    });
+  }
+};
 
 exports.check = async (req, res) => {
   const token = req.cookies.token;

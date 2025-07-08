@@ -77,7 +77,7 @@ exports.createPost = async (req, res) => {
     });
 
     await post.save();
-    await post.populate('author', 'username email');
+    await post.populate('author', 'username email profilePicture');
 
     res.status(201).json({
       message: 'Post created successfully',
@@ -108,7 +108,7 @@ exports.getPosts = async (req, res) => {
     }
 
     const posts = await Post.find(query)
-      .populate('author', 'username email')
+      .populate('author', 'username email profilePicture')
       .populate('comments.user', 'username')
       .populate('likes.user', 'username')
       .sort({ createdAt: -1 })

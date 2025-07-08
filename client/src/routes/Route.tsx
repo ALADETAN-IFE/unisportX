@@ -12,6 +12,7 @@ import FeedPage from "../pages/FeedPage";
 import PRroute from "../layout/PrivateRouting";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import TermsAndConditions from "../pages/TermsAndConditions";
+import AuthCallback from "../pages/AuthCallback";
 
 
 
@@ -26,12 +27,16 @@ const Routes = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: "signup",
+        element: <SignupPage />,
+      },
+      {
         path: "login",
         element: <LoginPage />,
       },
       {
-        path: "signup",
-        element: <SignupPage />,
+        path: "auth/callback",
+        element: <AuthCallback />,
       },
       {
         path: "forgot-password",

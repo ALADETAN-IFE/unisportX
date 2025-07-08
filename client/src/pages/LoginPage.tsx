@@ -7,6 +7,7 @@ import { login as reduxLogin } from '../utils/user';
 import { toast } from 'react-toastify';
 import ResendVerification from '../components/ResendVerification';
 import SEO from '../components/SEO';
+import GoogleAuthBtn from '../components/GoogleAuthBtn';
 import { IoEyeOffOutline, IoEyeOutline } from 'react-icons/io5';
 
 const LoginPage = () => {
@@ -186,6 +187,21 @@ const LoginPage = () => {
                 Forgot your password?
               </Link>
             </div>
+
+            {/* Divider */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Or</span>
+              </div>
+            </div>
+
+            {/* Google Auth Button */}
+            <GoogleAuthBtn 
+              text="Sign in with Google"
+            />
           </form>
         </div>
       </motion.div>

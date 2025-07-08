@@ -2,14 +2,16 @@ export interface UserData {
     _id:string;
     username: string;
     email: string;
-}
-
+    profilePicture?: string;
+  }
+  
 export interface Post {
   _id: string;
   author: {
     _id: string;
     username: string;
     email: string;
+    profilePicture?: string;
   };
   content: string;
   images: Array<{

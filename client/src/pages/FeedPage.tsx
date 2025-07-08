@@ -118,7 +118,7 @@ const FeedPage = () => {
         }}
       />
       {/* <div className="container mx-auto p-4 max-w-4xl"> */}
-      <div className="container mx-auto p-4 space-x-4 lg:max-w-4xl ">
+      <div className="container mx-auto p-4 space-x-4 lg:max-w-4xl mb-10">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
