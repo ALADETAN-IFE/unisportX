@@ -113,7 +113,7 @@ const VideoGrid = ({ loadVideos, setLoadVideos }: reloadVideo) => {
                 {video.title}
               </h3>
               <p className="text-gray-600 dark:text-gray-400 truncate" title={video.faculty}>
-                {video.faculty}
+                Faculty: {video.faculty}
               </p>
               <p className="text-gray-500 dark:text-gray-300 text-sm mt-1 line-clamp-2" title={video.description}>
                 {video.description}

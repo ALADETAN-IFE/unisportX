@@ -8,6 +8,21 @@ const videoSchema = new mongoose.Schema({
   faculty: {
     type: String,
     required: true,
+    enum: [
+      'Arts',
+      'Basic Medical Science',
+      'Clinical Science',
+      'Dental Science',
+      'Education',
+      'Engineering',
+      'Environmental Science',
+      'Health Professions',
+      'Law',
+      'Management Science',
+      'Pharmacy',
+      'Science',
+      'Social Science'
+    ]
   },
   youtubeLink: {
     type: String,

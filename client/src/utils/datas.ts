@@ -24,7 +24,7 @@ export const features = [
       title: "Responsive",
       description: "Access your favorite sports content on any device"
     }
-  ];
+];
 
 export const testimonials = [
     {
@@ -42,4 +42,19 @@ export const testimonials = [
       role: "Sports Coordinator",
       content: "As a sports coordinator, UniSportX has made it so much easier to showcase our university's athletic talent."
     }
-  ];
+];
+export const facultyOptions = [
+  'Arts',
+  'Basic Medical Science',
+  'Clinical Science',
+  'Dental Science',
+  'Education',
+  'Engineering',
+  'Environmental Science',
+  'Health Professions',
+  'Law',
+  'Management Science',
+  'Pharmacy',
+  'Science',
+  'Social Science'
+];

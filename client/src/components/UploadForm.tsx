@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { facultyOptions } from "../utils/datas"
 
 const UploadForm = ({ setLoadVideos }: { setLoadVideos: (loadVideos: boolean)=> void; }) => {
   const [title, setTitle] = useState('');
@@ -69,6 +70,7 @@ const UploadForm = ({ setLoadVideos }: { setLoadVideos: (loadVideos: boolean)=> 
     }
   };
 
+
   return (
     <form onSubmit={handleSubmit} className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md flex flex-col gap-4">
       <h2 className="text-xl font-bold text-gray-800 dark:text-white">Upload Video</h2>
@@ -135,11 +137,9 @@ const UploadForm = ({ setLoadVideos }: { setLoadVideos: (loadVideos: boolean)=> 
           disabled={loading}
         >
           <option value="">Select Faculty</option>
-          <option value="Engineering">Engineering</option>
-          <option value="Arts">Arts</option>
-          <option value="Science">Science</option>
-          <option value="Medicine">Medicine</option>
-          <option value="Law">Law</option>
+          {facultyOptions.map((option) => (
+            <option key={option} value={option}>{option}</option>
+          ))}
         </select>
       </div>
       <div className="">
