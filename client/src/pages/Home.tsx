@@ -44,9 +44,14 @@ const Home = () => {
       try {
         setLoadingVideos(true)
         const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/videos/get-videos`);
-        const allVideos = res.data;
+        const allVideos = res.data.videos;
         // Show only 3 videos
-        setVideos(allVideos.slice(0, 3));
+        if(allVideos.length > 3){
+          setVideos(allVideos.slice(0, 3));
+          return
+        }else{
+          setVideos(allVideos);
+        }
       } catch (err) {
         console.error('Error fetching videos:', err);
       } finally{
