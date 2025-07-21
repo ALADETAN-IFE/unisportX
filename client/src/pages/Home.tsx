@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../global/Redux-Store/Store';
+import { toast } from 'react-toastify';
 
 interface IVideo {
   _id: string;
@@ -42,6 +43,7 @@ const Home = () => {
     const hasVisited = localStorage.getItem('hasVisited');
     if (hasVisited) {
       if (isLoggedIn) {
+        toast.info("You can't see the homepage while you are logged in")
         navigate('/app');
       }
     } else {
