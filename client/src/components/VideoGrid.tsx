@@ -7,7 +7,10 @@ import { toast } from 'react-toastify';
 interface IVideo {
   _id: string;
   title: string;
-  faculty: string;
+  school: {
+    name: string;
+    faculty: string;
+  }
   youtubeLink: string;
   description: string;
   createdAt?: string;
@@ -75,9 +78,9 @@ const VideoGrid = ({ loadVideos, setLoadVideos }: reloadVideo) => {
 
   const filteredVideos = selectedFaculty === 'all' 
     ? videos 
-    : videos.filter(video => video.faculty === selectedFaculty);
+    : videos.filter(video => video.school.faculty === selectedFaculty);
 
-  const uniqueFaculties = [...new Set(videos.map(video => video.faculty))];
+  const uniqueFaculties = [...new Set(videos.map(video => video.school.faculty))];
 
   if (loading && videos.length === 0) {
     return (
@@ -181,8 +184,8 @@ const VideoGrid = ({ loadVideos, setLoadVideos }: reloadVideo) => {
                 </h3>
                 
                 <div className="flex items-center justify-between">
-                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFacultyColor(video.faculty)}`}>
-                    {video.faculty}
+                  <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFacultyColor(video.school.faculty)}`}>
+                    {video.school.faculty}
                   </span>
                   {(video.createdAt || video.uploadDate) && (
                     <span className="text-xs text-gray-500 dark:text-gray-400">
