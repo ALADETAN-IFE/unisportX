@@ -4,11 +4,5 @@
       "source": "/sitemap.xml",
       "destination": "https://unisportx.onrender.com/sitemap.xml"
     }
-  ],
-  "routes": [
-    {
-      "src": "/sitemap.xml",
-      "dest": "https://unisportx.onrender.com/sitemap.xml"
-    }
   ]
 } 
