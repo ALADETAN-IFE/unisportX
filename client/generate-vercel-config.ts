@@ -1,7 +1,5 @@
-const fs = require("fs");
-require("dotenv").config(); // Load .env
-
-const backendURL = process.env.VITE_SERVER_URL;
+import fs from "fs";
+const backendURL = process.env.VITE_SERVER_URL
 
 const vercelConfig = {
   rewrites: [

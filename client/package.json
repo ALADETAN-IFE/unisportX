@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "prebuild": "node generate-vercel-config.js",
+    "prebuild": "node generate-vercel-config.ts",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
