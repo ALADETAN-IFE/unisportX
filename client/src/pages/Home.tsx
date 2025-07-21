@@ -45,6 +45,8 @@ const Home = () => {
       if (isLoggedIn) {
         toast.info("You can't see the homepage while you are logged in")
         navigate('/app');
+      } else {
+        localStorage.setItem('hasVisited', 'false');
       }
     } else {
       localStorage.setItem('hasVisited', 'true');
