@@ -1,0 +1,21 @@
+{
+  "name": "UniSportX",
+  "short_name": "UniSportX",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "description": "The ultimate platform for sharing and watching your university's sports highlights and moments.",
+  "icons": [
+    {
+      "src": "/logo-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} 
