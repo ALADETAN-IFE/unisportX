@@ -444,7 +444,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
                     user={user!}
                     isDeleting={isDeleting}
                     handleDeleteComment={handleDeleteComment}
-                    formatDate={formatDate}
+                    formatDate={formatRelativeTime}
                   />
                 ))}
               </div>
