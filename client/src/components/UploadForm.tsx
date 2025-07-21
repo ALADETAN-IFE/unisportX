@@ -390,7 +390,7 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
             value={intraUniversityType}
             onChange={(e) => setIntraUniversityType(e.target.value)}
             className="w-full px-3 py-2 rounded-md border dark:bg-gray-700 dark:text-white"
-            placeholder="HOD Game, Deans Game, VC's Game, Freshers cup"
+            placeholder="HOD Game, Deans Game, VC's Game, Freshers Game"
             required
             disabled={loading || isProcessing}
           />
