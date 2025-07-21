@@ -19,7 +19,6 @@ interface IVideo {
 const Home = () => {
   const [videos, setVideos] = useState<IVideo[]>([]);
   const [loadingVideos, setLoadingVideos] = useState(true);
-  const [hasOpened, sethasOpened] = useState(false);
   const { isLoggedIn } = useSelector((state: RootState) => state.uniSportX);
 
   const navigate = useNavigate()
@@ -40,14 +39,15 @@ const Home = () => {
   const ctaInView = useInView(ctaRef, { once: true, amount: 0.3 });
 
   useEffect(() => {
-    if(hasOpened){
-      if(isLoggedIn){
-        navigate("/app")
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (hasVisited) {
+      if (isLoggedIn) {
+        navigate('/app');
       }
-    } else{
-      sethasOpened(true)
+    } else {
+      localStorage.setItem('hasVisited', 'true');
     }
-  }, [])
+  }, [isLoggedIn, navigate]);
 
   useEffect(() => {
     // Fetch videos (only 3 for non-logged in users)
