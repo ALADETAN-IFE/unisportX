@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, useInView } from 'motion/react';
 import axios from 'axios';
 import { features, testimonials } from "../utils/datas"
@@ -19,7 +19,10 @@ interface IVideo {
 const Home = () => {
   const [videos, setVideos] = useState<IVideo[]>([]);
   const [loadingVideos, setLoadingVideos] = useState(true);
+  const [hasOpened, sethasOpened] = useState(false);
   const { isLoggedIn } = useSelector((state: RootState) => state.uniSportX);
+
+  const navigate = useNavigate()
 
 
   // Refs for intersection observer
@@ -37,8 +40,16 @@ const Home = () => {
   const ctaInView = useInView(ctaRef, { once: true, amount: 0.3 });
 
   useEffect(() => {
+    if(hasOpened){
+      if(isLoggedIn){
+        navigate("/app")
+      }
+    } else{
+      sethasOpened(true)
+    }
+  }, [])
 
-
+  useEffect(() => {
     // Fetch videos (only 3 for non-logged in users)
     const fetchVideos = async () => {
       try {
