@@ -1,27 +1,44 @@
 const fs = require("fs");
 const youtube = require("../config/youtubeAuth"); // Adjust path if needed
 const Video = require("../models/Video");
+const User = require('../models/User');
 
 exports.uploadVideo = async (req, res) => {
   try {
     const filePath = req.file.path;
-    const { title, faculty, description } = req.body;
-    const  year = new Date().getFullYear();
-         if( !title || !faculty || !description || !filePath ){
+    const {
+      title,
+      country,
+      schoolName,
+      schoolDepartment,
+      schoolFaculty,
+      schoolCampus,
+      eventType,
+      participants,
+      tags,
+      description
+    } = req.body;
+    const userId = req.user.id;
+    const year = new Date().getFullYear();
 
-           return res.status(400).json(
-             { error: 
-                !title ? "Please provide a title"
-                 : !faculty ? "Please provide the faculty name" 
-                 : !filePath ? "Please provide the video file" 
-                 : !description ? "Please provide a description" : "Missing required fields" }
-           )
-         }
+    // Validate required fields
+    if (!title || !country || !schoolName || !description || !filePath) {
+      return res.status(400).json({
+        error:
+          !title ? "Please provide a title"
+            : !country ? "Please provide a country"
+            : !schoolName ? "Please provide the school name"
+            : !filePath ? "Please provide the video file"
+            : !description ? "Please provide a description" : "Missing required fields"
+      });
+    }
+    const existingUser = await User.findById(userId);
 
-    const playlistName = `${faculty}(${year})`;
+    // Playlist logic (can use schoolName or faculty for playlist)
+    const playlistName = `${schoolName || schoolFaculty}(${year})`;
 
-     // STEP 1: Check if playlist exists
-     const playlists = await youtube.playlists.list({
+    // STEP 1: Check if playlist exists
+    const playlists = await youtube.playlists.list({
       part: "snippet",
       mine: true,
       maxResults: 50,
@@ -39,7 +56,7 @@ exports.uploadVideo = async (req, res) => {
         requestBody: {
           snippet: {
             title: playlistName,
-            description: `Playlist for ${faculty} (${year})`,
+            description: `Playlist for ${schoolFaculty || schoolName} (${year})`,
           },
           status: {
             privacyStatus: "unlisted",
@@ -57,8 +74,16 @@ exports.uploadVideo = async (req, res) => {
       requestBody: {
         snippet: {
           title,
-          description: description || `Faculty: ${faculty}`,
-          tags: ["UnisportX", "sportsweek", "university", faculty, year],
+          description: description || `School: ${schoolName}`,
+          tags: [
+            "UnisportX",
+            "sportsweek",
+            "university",
+            schoolFaculty,
+            year,
+            schoolName,
+            ...(Array.isArray(tags) ? tags : (tags ? tags.split(',').map(t => t.trim()) : []))
+          ],
         },
         status: {
           privacyStatus: "unlisted",
@@ -85,15 +110,35 @@ exports.uploadVideo = async (req, res) => {
       },
     });
 
-   // Clean up local file
-   fs.unlinkSync(filePath);
+    // Clean up local file
+    fs.unlinkSync(filePath);
+
+    // Prepare participants array if provided
+    let participantsArr = [];
+    if (participants) {
+      try {
+        participantsArr = typeof participants === 'string' ? JSON.parse(participants) : participants;
+      } catch (e) {
+        participantsArr = [];
+      }
+    }
 
     // Save to DB
     const video = await Video.create({
       title,
+      country,
+      school: {
+        name: schoolName,
+        department: schoolDepartment,
+        faculty: schoolFaculty,
+        campus: schoolCampus
+      },
+      eventType: eventType || 'General',
+      participants: participantsArr,
+      tags: Array.isArray(tags) ? tags : (tags ? tags.split(',').map(t => t.trim()) : []),
       youtubeLink: `https://www.youtube.com/watch?v=${videoId}`,
-      faculty,
-      description
+      description,
+      uploadedBy: existingUser._id
     });
 
     res.json({ success: true, video, res: response });
@@ -111,24 +156,24 @@ exports.uploadVideo = async (req, res) => {
 
     // Handle specific YouTube API errors
     if (err.code === 404 && err.message === 'Channel not found.') {
-      return res.status(400).json({ 
-        success: false, 
+      return res.status(400).json({
+        success: false,
         error: "YouTube channel not found",
         message: "The YouTube channel associated with this account could not be found. Please ensure the YouTube account is properly set up and has a channel created."
       });
     }
 
     if (err.code === 401 || err.code === 403) {
-      return res.status(400).json({ 
-        success: false, 
+      return res.status(400).json({
+        success: false,
         error: "YouTube authentication failed",
         message: "YouTube API authentication has expired or is invalid. Please contact the administrator to refresh the YouTube integration."
       });
     }
 
     if (err.code === 400) {
-      return res.status(400).json({ 
-        success: false, 
+      return res.status(400).json({
+        success: false,
         error: "YouTube API error",
         message: "There was an issue with the YouTube API. Please try again or contact support."
       });
@@ -141,7 +186,6 @@ exports.uploadVideo = async (req, res) => {
     });
   }
 };
-
 
 exports.getVideos = async (req, res) => {
   try {

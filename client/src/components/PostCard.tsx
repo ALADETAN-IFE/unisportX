@@ -8,6 +8,7 @@ import EditPost from './EditPost';
 import DeletePostConfirm from './DeletePostConfirm';
 import Comment from '../components/Comment';
 import type { Post } from '../interface'
+import { formatRelativeTime } from "../utils/date"
 
 interface PostCardProps {
   post: Post;
@@ -191,19 +192,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
-    return date.toLocaleDateString();
-  };
+
 
   return (
     <motion.div
@@ -219,7 +208,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
             <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
               {
                 post.author?.profilePicture ? (
-                    <img src={post.author?.profilePicture} alt={post.author.username.charAt(0).toUpperCase()}/>
+                    <img src={post.author?.profilePicture || '/default-avatar.png'} alt={post.author.username.charAt(0).toUpperCase()}/>
                 ): `${post.author.username.charAt(0).toUpperCase()}`
               }
             </div>
@@ -228,7 +217,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
                 {post.author.username.charAt(0).toUpperCase() + post.author.username.slice(1)}
               </h3>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {formatDate(localPost.createdAt)} • {localPost.category}
+                {formatRelativeTime(localPost.createdAt)} • {localPost.category}
               </p>
             </div>
           </div>

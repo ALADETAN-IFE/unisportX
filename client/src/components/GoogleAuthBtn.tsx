@@ -25,7 +25,13 @@ const GoogleAuthBtn: React.FC<GoogleAuthBtnProps> = ({ text = "Continue with Goo
     return (
         <button
             type="button"
-            onClick={handleLogin}
+            onClick={()=> {
+                if(loading){
+                 toast.loading("loading...")
+                }else{
+                    handleLogin()
+                }
+            }}
             disabled={loading}
             className="w-full flex items-center justify-center gap-3 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 font-medium py-2 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >

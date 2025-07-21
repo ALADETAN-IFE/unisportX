@@ -3,11 +3,12 @@ import { motion } from 'motion/react';
 import axios from 'axios';
 import CreatePost from '../components/CreatePost';
 import PostCard from '../components/PostCard';
+import VideoCard from '../components/VideoCard';
 import SEO from '../components/SEO';
-import type { Post } from '../interface'
+import type { Post, Video, FeedItem } from '../interface'
 
 const FeedPage = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -30,21 +31,21 @@ const FeedPage = () => {
         { withCredentials: true }
       );
 
-      const newPosts = response.data.posts;
+      const newFeedItems = response.data.posts;
       
       if (append) {
-        setPosts(prev => [...prev, ...newPosts]);
+        setFeedItems(prev => [...prev, ...newFeedItems]);
       } else {
-        setPosts(newPosts);
+        setFeedItems(newFeedItems);
       }
 
       setHasMore(pageNum < response.data.totalPages);
       setPage(pageNum);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error('Error fetching posts:', error);
-        const errorMessage = error.response?.data?.message || 'Error fetching posts';
-        console.error('Error fetching posts:', errorMessage);
+        console.error('Error fetching feed items:', error);
+        const errorMessage = error.response?.data?.message || 'Error fetching feed items';
+        console.error('Error fetching feed items:', errorMessage);
       } else {
         console.error('Something went wrong');
       }
@@ -156,9 +157,9 @@ const FeedPage = () => {
         {/* Create Post */}
         <CreatePost onPostCreated={handlePostCreated} />
 
-        {/* Posts Feed */}
+        {/* Feed Items */}
         <div className="space-y-6">
-          {posts.length === 0 ? (
+          {feedItems.length === 0 ? (
             <div className="text-center py-12">
               <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,28 +167,42 @@ const FeedPage = () => {
                 </svg>
               </div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                No posts yet
+                No content yet
               </h3>
               <p className="text-gray-500 dark:text-gray-400">
                 {category === 'all' 
                   ? 'Be the first to share something!'
-                  : `No ${category} posts yet. Be the first to share!`
+                  : `No ${category} content yet. Be the first to share!`
                 }
               </p>
             </div>
           ) : (
-            posts.map((post) => (
-              <PostCard
-                key={post._id}
-                post={post}
-                onPostUpdated={handlePostUpdated}
-              />
-            ))
+            feedItems.map((item) => {
+              // Check if item is a post or video
+              if ('content' in item) {
+                // It's a post
+                return (
+                  <PostCard
+                    key={item._id}
+                    post={item as Post}
+                    onPostUpdated={handlePostUpdated}
+                  />
+                );
+              } else {
+                // It's a video
+                return (
+                  <VideoCard
+                    key={item._id}
+                    video={item as Video}
+                  />
+                );
+              }
+            })
           )}
         </div>
 
         {/* Load More Button */}
-        {hasMore && posts.length > 0 && (
+        {hasMore && feedItems.length > 0 && (
           <div className="text-center mt-8">
             <button
               onClick={handleLoadMore}
@@ -200,7 +215,7 @@ const FeedPage = () => {
                   <span>Loading...</span>
                 </div>
               ) : (
-                'Load More Posts'
+                'Load More'
               )}
             </button>
           </div>

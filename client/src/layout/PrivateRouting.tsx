@@ -13,7 +13,7 @@ useEffect(() => {
   scrollToTop();
 }, [location.pathname]);
 
-  return isLoggedIn ? <><ScrollToTopBtn/> <Outlet/></> :  <Navigate to="/login" replace={true}/>
+  return isLoggedIn ? <><ScrollToTopBtn/> <Outlet/></> :  <Navigate to="/login" replace />
 }
 
 export default PRroute

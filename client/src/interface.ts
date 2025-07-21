@@ -1,10 +1,18 @@
 export interface UserData {
-    _id:string;
+    _id: string;
     username: string;
     email: string;
     profilePicture?: string;
-  }
-  
+    isVerified: boolean;
+    faculty?: string;
+    role: string;
+    createdAt?: string;
+    updatedAt?: string;
+    isActive?: boolean;
+}
+
+export type Role = string;
+
 export interface Post {
   _id: string;
   author: {
@@ -44,3 +52,33 @@ export interface Post {
   likeCount: number;
   commentCount: number;
 }
+
+export interface Video {
+  _id: string;
+  title: string;
+  description: string;
+  country: string;
+  school: {
+    name: string;
+    department?: string;
+    faculty?: string;
+    campus?: string;
+  };
+  eventType: string;
+  participants: Array<{
+    name: string;
+    school: string;
+    country: string;
+  }>;
+  tags: string[];
+  youtubeLink: string;
+  uploadTime: string;
+  uploadedBy: {
+    _id: string;
+    username: string;
+    email: string;
+    profilePicture?: string;
+  };
+}
+
+export type FeedItem = Post | Video;

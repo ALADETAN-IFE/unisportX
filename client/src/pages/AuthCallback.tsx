@@ -1,22 +1,30 @@
 // src/pages/AuthCallback.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { login as reduxLogin } from '../utils/user';
+// import debounce from '../utils/deBounce';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const hasProcessed = useRef(false);
 
   useEffect(() => {
     // const hash = window.location.hash.substring(1);
     // const params = new URLSearchParams(hash);
     // const idToken = params.get("id_token") || params.get("access_token");
+    // Prevent multiple executions in React Strict Mode
+    if (hasProcessed.current) return;
+    hasProcessed.current = true;
+    
     const handleCallback = async () => {
       try {
+        
+      // console.log("hasProcessed 2", hasProcessed)
         // Get the access token from URL hash
         // Get the ID token from URL hash
         const hash = window.location.hash.substring(1);

@@ -9,10 +9,13 @@ import ResetPasswordPage from "../pages/ResetPasswordPage";
 import VerifyEmailPage from "../pages/VerifyEmailPage";
 import VideosPage from "../pages/VideosPage";
 import FeedPage from "../pages/FeedPage";
+import AdminPage from "../pages/AdminPage";
 import PRroute from "../layout/PrivateRouting";
+import AdminRoute from "../layout/AdminRoute";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import TermsAndConditions from "../pages/TermsAndConditions";
 import AuthCallback from "../pages/AuthCallback";
+// import UniSelect from "../components/UniSelect";
 
 
 
@@ -58,6 +61,10 @@ const Routes = createBrowserRouter([
         path: "reset-password",
         element: <ResetPasswordPage />,
       },
+      // {
+      //   path: "uniselect",
+      //   element: <UniSelect />,
+      // },
       {
         path: "app",
         element: <PRroute />,
@@ -72,12 +79,10 @@ const Routes = createBrowserRouter([
             path: "videos",
             element: <VideosPage />,
           },
-        ]
-      },
-      {
-        // path: "app",
-        element: <PRroute />,
-        children: [
+          {
+            path: "manage",
+            element: <AdminRoute><AdminPage /></AdminRoute>,
+          },
         ]
       },
     ],

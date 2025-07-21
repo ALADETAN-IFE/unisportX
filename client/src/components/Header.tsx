@@ -20,12 +20,14 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setisLoggingOut] = useState(false);
+  // const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const dispatch = useDispatch();
-  const { isLoggedIn, userData } = useSelector((state: RootState) => state.uniSportX);
+  const { isLoggedIn, userData, role } = useSelector((state: RootState) => state.uniSportX);
 
   // Initialize dark mode from localStorage and system preference
   useEffect(() => {
+    // setIsAdmin(role === "admin")
     const savedDarkMode = localStorage.getItem('darkMode');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
@@ -61,18 +63,18 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
     setShowLogoutConfirm(true);
   };
 
-  const getToken = () => {
-    const cookies = document.cookie.split('; ');
-    const tokenCookie = cookies.find(cookie => cookie.startsWith("token="));
-    return tokenCookie ? tokenCookie.split('=')[1] : `null ${cookies} hello ${document.cookie}`;
-  }
+  // const getToken = () => {
+  //   const cookies = document.cookie.split('; ');
+  //   const tokenCookie = cookies.find(cookie => cookie.startsWith("token="));
+  //   return tokenCookie ? tokenCookie.split('=')[1] : `null ${cookies} hello ${document.cookie}`;
+  // }
   
-  const token = getToken();
-  if (token) {
-    console.log('Token is available:', token);
-  } else {
-    console.log('Token is not available', token);
-  }
+  // const token = getToken();
+  // if (token) {
+  //   console.log('Token is available:', token);
+  // } else {
+  //   console.log('Token is not available', token);
+  // }
 
   const handleLogout = async () => {
     try {
@@ -106,7 +108,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <img src="/logo.png" alt="UniSportX" className="w-10 h-10" />
-            <span className="text-xl font-bold text-gray-800 dark:text-white hidden sm:block">
+            <span className={`text-xl font-bold text-gray-800 dark:text-white hidden sm:block ${role == "admin" ? "min-md:!hidden" : "" }`}>
               UniSportX
             </span>
           </Link>
@@ -134,6 +136,17 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
                   >
                      <Feed />
                     Feed
+                  </Link>
+                )}
+                {role === "admin" && location.pathname !== '/app/admin' && (
+                  <Link 
+                    to="/app/manage"
+                    className="flex gap-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition duration-200 text-sm"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    Admin
                   </Link>
                 )}
                 <button
@@ -245,6 +258,18 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
                     >
                        <Feed />
                       Feed
+                    </Link>
+                  )}
+                  {role === "admin" && location.pathname !== '/app/admin' && (
+                    <Link 
+                      to="/app/manage"
+                      className="flex gap-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition duration-200 text-sm"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                      Admin
                     </Link>
                   )}
                   <button

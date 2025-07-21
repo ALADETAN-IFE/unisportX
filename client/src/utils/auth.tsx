@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { logOut } from "../global/Redux-actions/actions";
+import { setUserData, logOut } from "../global/Redux-actions/actions";
 
 export function useAuth() {
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -14,7 +14,8 @@ export function useAuth() {
       .then(res => res.json())
       .then(data => {
         if (data.authenticated) {
-          setUser(data.user);
+          // setUser(data.user);
+          dispatch(setUserData(data.user));
         } else {
           toast.success("Please login again")
           dispatch(logOut());
@@ -22,5 +23,5 @@ export function useAuth() {
       });
   }, []);
 
-  return user;
+  return;
 }

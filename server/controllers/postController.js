@@ -1,4 +1,5 @@
 const Post = require('../models/Post');
+const Video = require('../models/Video');
 const cloudinary = require('../config/cloudinary');
 const { Readable } = require('stream');
 
@@ -89,7 +90,7 @@ exports.createPost = async (req, res) => {
   }
 };
 
-// Get all posts (with pagination)
+// Get all posts and videos (with pagination)
 exports.getPosts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -97,35 +98,61 @@ exports.getPosts = async (req, res) => {
     const category = req.query.category;
     const author = req.query.author;
 
-    const query = { isPublic: true };
+    const postQuery = { isPublic: true };
+    const videoQuery = {};
     
-    if (category) {
-      query.category = category;
+    if (category && category !== 'all') {
+      postQuery.category = category;
+      videoQuery.eventType = category;
     }
     
     if (author) {
-      query.author = author;
+      postQuery.author = author;
+      videoQuery.uploadedBy = author;
     }
 
-    const posts = await Post.find(query)
-      .populate('author', 'username email profilePicture')
-      .populate('comments.user', 'username profilePicture')
-      .populate('likes.user', 'username')
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
+    // Fetch posts and videos in parallel
+    const [posts, videos] = await Promise.all([
+      Post.find(postQuery)
+        .populate('author', 'username email profilePicture')
+        .populate('comments.user', 'username profilePicture')
+        .populate('likes.user', 'username')
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      Video.find(videoQuery)
+        .populate('uploadedBy', 'username email profilePicture')
+        .sort({ uploadTime: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+    ]);
 
-    const total = await Post.countDocuments(query);
+    // Combine and sort by creation date
+    const combinedFeed = [...posts, ...videos].sort((a, b) => {
+      const dateA = a.createdAt || a.uploadTime;
+      const dateB = b.createdAt || b.uploadTime;
+      return new Date(dateB) - new Date(dateA);
+    });
+
+    // Get total counts
+    const [totalPosts, totalVideos] = await Promise.all([
+      Post.countDocuments(postQuery),
+      Video.countDocuments(videoQuery)
+    ]);
+
+    const total = totalPosts + totalVideos;
 
     res.json({
-      posts,
+      posts: combinedFeed,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
-      totalPosts: total
+      totalPosts: total,
+      totalPostCount: totalPosts,
+      totalVideoCount: totalVideos
     });
   } catch (error) {
-    console.error('Error fetching posts:', error);
-    res.status(500).json({ message: 'Error fetching posts' });
+    console.error('Error fetching posts and videos:', error);
+    res.status(500).json({ message: 'Error fetching posts and videos' });
   }
 };
 

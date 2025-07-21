@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "prebuild": "node generate-vercel-config.js",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -12,6 +13,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.10.0",
+    "browser-image-compression": "^2.0.2",
     "motion": "^12.19.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

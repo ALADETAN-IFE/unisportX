@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import imageCompression from 'browser-image-compression';
 
 interface CreatePostProps {
   onPostCreated: () => void;
@@ -16,37 +17,109 @@ const CreatePost: React.FC<CreatePostProps> = ({ onPostCreated }) => {
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async(e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     
     if (files.length + images.length > 10) {
       toast.error('Maximum 10 images allowed');
       return;
     }
+    
+  const processedImages: File[] = [];
+  const previews: string[] = [];
 
-    const validFiles = files.filter(file => {
-      if (!file.type.startsWith('image/')) {
-        toast.error(`${file.name} is not an image file`);
-        return false;
+  for (const file of files) {
+    if (!file.type.startsWith('image/')) {
+      toast.error(`${file.name} is not an image file`);
+      continue;
+    }
+
+    let finalFile = file;
+
+    if (file.size > 5 * 1024 * 1024) {
+      try {
+        const compressed = await imageCompression(file, {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1024,
+          useWebWorker: true,
+        });
+
+        if (compressed.size > 5 * 1024 * 1024) {
+          toast.error(`${file.name} is still too large even after compression`);
+          continue;
+        }
+
+        finalFile = compressed;
+      } catch (error) {
+        console.error('Compression failed:', error);
+        toast.error(`Failed to compress ${file.name}`);
+        continue;
       }
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error(`${file.name} is too large (max 5MB)`);
-        return false;
-      }
-      return true;
-    });
+    }
 
-    setImages(prev => [...prev, ...validFiles]);
+    processedImages.push(finalFile);
 
-    // Create preview URLs
-    validFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-          const blobImage = e.target?.result
-        setImagePreview(prev => [...prev, blobImage as string]);
-      };
-      reader.readAsDataURL(file);
-    });
+    const preview = await imageCompression.getDataUrlFromFile(finalFile);
+    previews.push(preview);
+  }
+
+  setImages((prev) => [...prev, ...processedImages]);
+  setImagePreview((prev) => [...prev, ...previews]);
+    // const validFiles = files.filter(file => {
+    //   console.log(file.size)
+    //   if (!file.type.startsWith('image/')) {
+    //     toast.error(`${file.name} is not an image file`);
+    //     return false;
+    //   }
+    //   if (file.size > 5 * 1024 * 1024) {
+    //     toast.error(`${file.name} is too large (max 5MB)`);
+    //     return false;
+    //   }
+    //   return true;
+    // });
+
+    // setImages(prev => [...prev, ...validFiles]);
+
+    // // Create preview URLs
+    // validFiles.forEach(file => {
+    //   const reader = new FileReader();
+    //   reader.onload = (e) => {
+    //       const blobImage = e.target?.result
+    //     setImagePreview(prev => [...prev, blobImage as string]);
+    //   };
+    //   reader.readAsDataURL(file);
+    // });
+
+    // const compressedImages: File[] = [];
+    // const previews: string[] = [];
+
+    // for (const file of files) {
+    // try {
+    //   const options = {
+    //     maxSizeMB: 1, // max file size 1MB
+    //     maxWidthOrHeight: 1024,
+    //     useWebWorker: true,
+    //   };
+
+    //   const compressedFile = await imageCompression(file, options);
+
+    //   if (compressedFile.size > 5 * 1024 * 1024) {
+    //     toast.error(`${file.name} is still too large even after compression`);
+    //     continue;
+    //   }
+
+    //   compressedImages.push(compressedFile);
+
+    //   const preview = await imageCompression.getDataUrlFromFile(compressedFile);
+    //   previews.push(preview);
+    // } catch (error) {
+    //   console.error('Image compression error:', error);
+    //   toast.error(`Failed to compress ${file.name}`);
+    // }
+    // }
+
+    // setImages(prev => [...prev, ...compressedImages]);
+    // setImagePreview(prev => [...prev, ...previews]);
   };
 
   const removeImage = (index: number) => {

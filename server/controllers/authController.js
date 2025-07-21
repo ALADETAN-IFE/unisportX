@@ -75,12 +75,12 @@ exports.login = async (req, res) => {
     }
     const user = await User.findOne(payload);
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'This account doesn’t exist.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Your password is incorrect or this account doesn’t exist.' });
     }
 
     if(user.isVerified == false){
@@ -91,11 +91,17 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Clear reset token fields
+    if(user.resetPasswordExpires || user.resetPasswordToken){
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpires = undefined;
+    }
+
    generateToken(user, res)
 
     const { password: _, ...userWithoutPassword } = user._doc;
         
-    res.status(200).json({ message: 'User logged in successfully', data: userWithoutPassword });
+    res.status(200).json({ message: userWithoutPassword.isActive == true ? 'User logged in successfully': 'This account is currently deactivated', data: userWithoutPassword });
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: 'Something went wrong' });
@@ -120,13 +126,14 @@ exports.googleAuth = async (req, res) => {
 
     // Check if user already exists
     let user = await User.findOne({ email });
-    let existingName = await User.findOne({ username: name });
-
+    let existingName = await User.findOne({ username: name.toLowerCase() });
+    
+    console.log("name", name)
+    // console.log("user", user)
+    console.log("existingName", existingName.username)
     if (!user) {
       // Create new user
-      const username = existingName ? name.toLowerCase().replace(/\s+/g, '') : name.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 1000);
-      console.log("name", name)
-      console.log("existingName", existingName)
+      const username = !existingName ? name.toLowerCase().replace(/\s+/g, '') : name.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 1000);
       user = new User({
         username,
         email,
@@ -175,9 +182,25 @@ exports.check = async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // res.status(200).json({ authenticated: true, user: decoded.user });
-    res.status(200).json({ authenticated: true});
+    
+    // Find user in database to ensure they still exist and get latest data
+    const user = await User.findById(decoded.user.id).select('-password');
+    
+    if (!user) {
+      return res.status(401).json({ authenticated: false });
+    }
+
+    // Check if user is active
+    // if (user.isActive === false) {
+    //   return res.status(401).json({ authenticated: false });
+    // }
+
+    res.status(200).json({ 
+      authenticated: true, 
+      user: user 
+    });
   } catch (err) {
+    console.error('Token verification error:', err);
     res.status(401).json({ authenticated: false });
   }
 }

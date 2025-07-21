@@ -12,7 +12,7 @@ exports.allUser = async (req, res) => {
 }
 
 exports.deleteUser = async (req, res) => {
-    const { id } = req.body
+    const { id } = req.params
     if (!id){
       return res.status(400).json({ message: 'User ID is required' });
     }
