@@ -9,7 +9,7 @@ exports.allUser = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Something went wrong' });
     }
-}
+};
 
 exports.deleteUser = async (req, res) => {
     const { id } = req.params
@@ -26,4 +26,4 @@ exports.deleteUser = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Something went wrong' });
     }
-}
+};
