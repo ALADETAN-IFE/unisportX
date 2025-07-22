@@ -42,6 +42,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/universities', postRoutes);
 app.use('/', sitemap);
 
 
