@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const postRoutes = require('./routes/postRoutes');
 const sitemap = require('./routes/sitemap')
+const hipolabsUniRoutes = require('./routes/hipolabsUniRoutes')
 const helmet = require('helmet');
 const morgan = require('morgan');
 
@@ -42,7 +43,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/posts', postRoutes);
-app.use('/api/universities', postRoutes);
+app.use('/api/universities', hipolabsUniRoutes);
 app.use('/', sitemap);
 
 
