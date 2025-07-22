@@ -56,7 +56,8 @@ export const fetchUniversities = async (countryName: string): Promise<University
   }
 
   try {
-    const res = await fetch(`http://universities.hipolabs.com/search?country=${countryName}`);
+    // const res = await fetch(`http://universities.hipolabs.com/search?country=${countryName}`);
+    const res = await fetch(`https://universities.hipolabs.com/search?country=${countryName}`);
     const data: University[] = await res.json();
     return data;
   } catch (err) {
