@@ -2,7 +2,7 @@
 const axios = require('axios');
 
 exports.universitiesProxy = async (req, res) => {
-  const { country } = req.query;
+  const { country } = req.params;
   try {
     // const response = await fetch(`http://universities.hipolabs.com/search?country=${encodeURIComponent(country)}`);
     // const data = await response.json();
