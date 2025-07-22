@@ -57,7 +57,7 @@ export const fetchUniversities = async (countryName: string): Promise<University
 
   try {
       // const res = await fetch(`http://universities.hipolabs.com/search?country=${countryName}`);
-    const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/api/universities?country=${countryName}`);
+    const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/universities?country=${countryName}`);
     const data: University[] = await res.json();
     return data;
   } catch (err) {
