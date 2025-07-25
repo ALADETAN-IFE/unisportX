@@ -67,7 +67,7 @@ const AdminPage = () => {
     if (!window.confirm('Are you sure you want to delete this video?')) return;
 
     try {
-      await axios.delete(`${import.meta.env.VITE_SERVER_URL}/admin/user/videos/${videoId}`, {
+      await axios.delete(`${import.meta.env.VITE_SERVER_URL}/admin/users/videos/${videoId}`, {
         withCredentials: true
       });
       toast.success('Video deleted successfully');
@@ -82,7 +82,7 @@ const AdminPage = () => {
     if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
 
     try {
-      await axios.delete(`${import.meta.env.VITE_SERVER_URL}/admin/user/delete-user/${userId}`, {
+      await axios.delete(`${import.meta.env.VITE_SERVER_URL}/admin/users/delete-user/${userId}`, {
         withCredentials: true
       });
       toast.success('User deleted successfully');
