@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import axios from 'axios';
+import customAxios from '../api/axiosInstance.ts';
 import { toast } from 'react-toastify';
 
 interface Post {
@@ -72,8 +73,7 @@ const EditPost: React.FC<EditPostProps> = ({ post, isOpen, onClose, onPostUpdate
         formData.append('image', selectedFile);
       }
 
-      await axios.put(`${import.meta.env.VITE_SERVER_URL}/posts/${post._id}`, formData, {
-        withCredentials: true,
+      await customAxios.put(`/posts/${post._id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

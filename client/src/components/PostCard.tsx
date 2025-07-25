@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import axios from 'axios';
+import customAxios from '../api/axiosInstance.ts';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../global/Redux-Store/Store';
@@ -83,12 +84,12 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
     try {
       if (currentReaction?.type === reactionType) {
         // Remove reaction
-        await axios.delete(`${import.meta.env.VITE_SERVER_URL}/posts/${post._id}/react`, {
+        await customAxios.delete(`/posts/${post._id}/react`, {
           withCredentials: true
         });
       } else {
         // Add/update reaction
-        await axios.post(`${import.meta.env.VITE_SERVER_URL}/posts/${post._id}/react`, {
+        await customAxios.post(`/posts/${post._id}/react`, {
           reactionType
         }, {
           withCredentials: true
@@ -126,10 +127,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
 
     setCommentLoading(true);
     try {
-      await axios.post(`${import.meta.env.VITE_SERVER_URL}/posts/${post._id}/comments`, {
+      await customAxios.post(`/posts/${post._id}/comments`, {
         content: newComment.trim()
-      }, {
-        withCredentials: true
       });
       
       setNewComment('');
@@ -150,9 +149,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
   const handleDeleteComment = async (commentId: string) => {
     try {
       setIsDeleting(true)
-      await axios.delete(`${import.meta.env.VITE_SERVER_URL}/posts/${post._id}/comments/${commentId}`, {
-        withCredentials: true
-      });
+      await customAxios.delete(`/posts/${post._id}/comments/${commentId}`);
       
       onPostUpdated();
       toast.success('Comment deleted successfully');
@@ -175,10 +172,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
 
   const handleDeletePost = async () => {
     try {
-      await axios.delete(`${import.meta.env.VITE_SERVER_URL}/posts/${post._id}`, {
-        withCredentials: true
-      });
-      
+      await customAxios.delete(`/posts/${post._id}`);
       toast.success('Post deleted successfully');
       onPostUpdated();
       setShowDeleteConfirm(false);

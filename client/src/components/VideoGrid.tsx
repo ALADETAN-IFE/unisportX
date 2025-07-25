@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import customAxios from '../api/axiosInstance.ts';
 import { motion } from 'motion/react';
 import { getFacultyColor } from "../utils/datas"
 import { toast } from 'react-toastify';
@@ -33,7 +34,7 @@ const VideoGrid = ({ loadVideos, setLoadVideos }: reloadVideo) => {
       setLoadVideos(false);
       setLoading(true);
       setError(null);
-      const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/videos/get-videos`);
+      const res = await customAxios.get(`/videos/get-videos`);
       setVideos(res.data.videos);
     } catch (err) {
       if (axios.isAxiosError(err)) {

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import axios from 'axios';
+import customAxios from '../api/axiosInstance.ts';
 import { toast } from 'react-toastify';
 import imageCompression from 'browser-image-compression';
 
@@ -152,11 +153,10 @@ const CreatePost: React.FC<CreatePostProps> = ({ onPostCreated }) => {
       }
 
       const endpoint = images.length > 1 ? '/multiple' : '';
-      const response = await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/posts${endpoint}`,
+      const response = await customAxios.post(
+        `/posts${endpoint}`,
         formData,
         {
-          withCredentials: true,
           headers: {
             'Content-Type': 'multipart/form-data',
           },

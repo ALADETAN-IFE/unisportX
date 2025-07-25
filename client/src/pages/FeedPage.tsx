@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import axios from 'axios';
+import customAxios from '../api/axiosInstance.ts';
 import CreatePost from '../components/CreatePost';
 import PostCard from '../components/PostCard';
 import VideoCard from '../components/VideoCard';
@@ -26,10 +27,7 @@ const FeedPage = () => {
         params.append('category', category);
       }
 
-      const response = await axios.get(
-        `${import.meta.env.VITE_SERVER_URL}/posts?${params}`,
-        { withCredentials: true }
-      );
+      const response = await customAxios.get(`/posts?${params}`);
 
       const newFeedItems = response.data.posts;
       

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import customAxios from '../api/axiosInstance.ts';
 import { toast } from 'react-toastify';
 import { motion } from 'motion/react';
 import SEO from '../components/SEO';
@@ -38,14 +39,10 @@ const AdminPage = () => {
       setError(null);
 
       if (activeTab === 'videos') {
-        const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/videos/get-videos`, {
-          withCredentials: true
-        });
+        const res = await customAxios.get(`/videos/get-videos`);
         setVideos(res.data.videos || []);
       } else {
-        const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/admin/users/all-user`, {
-          withCredentials: true
-        });
+        const res = await customAxios.get(`/admin/users/all-user`);
         setUsers(res.data.users || []);
       }
     } catch (err) {
@@ -67,9 +64,7 @@ const AdminPage = () => {
     if (!window.confirm('Are you sure you want to delete this video?')) return;
 
     try {
-      await axios.delete(`${import.meta.env.VITE_SERVER_URL}/admin/users/videos/${videoId}`, {
-        withCredentials: true
-      });
+      await customAxios.delete(`/admin/users/videos/${videoId}`);
       toast.success('Video deleted successfully');
       fetchData();
     } catch (err) {
@@ -82,9 +77,7 @@ const AdminPage = () => {
     if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) return;
 
     try {
-      await axios.delete(`${import.meta.env.VITE_SERVER_URL}/admin/users/delete-user/${userId}`, {
-        withCredentials: true
-      });
+      await customAxios.delete(`/admin/users/delete-user/${userId}`);
       toast.success('User deleted successfully');
       fetchData();
     } catch (err) {
@@ -95,7 +88,7 @@ const AdminPage = () => {
 
   const toggleUserStatus = async (userId: string, isActive: boolean) => {
     try {
-      await axios.patch(`${import.meta.env.VITE_SERVER_URL}/admin/users/${userId}/status`, {
+      await customAxios.patch(`/admin/users/${userId}/status`, {
         isActive: !isActive
       }, {
         withCredentials: true

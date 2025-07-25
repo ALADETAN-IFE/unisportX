@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import customAxios from '../api/axiosInstance.ts';
 import { toast } from 'react-toastify';
 // import { facultyOptions } from "../utils/datas"
 import useVideoEditor from '../hooks/useVideoEditor';
@@ -15,6 +16,14 @@ const eventTypeOptions = [
   'General',
 ];
 
+const IntraUniversityOptions = [
+  'HOD Game',
+  'Deans Game',
+  "VC's Game",
+  'Freshers Game',
+  'Not here'
+]
+
 const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: boolean)=> void; onSuccess?: () => void; }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -25,6 +34,7 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
   // const [schoolCampus, setSchoolCampus] = useState('');
   const [eventType, setEventType] = useState('General');
   const [intraUniversityType, setIntraUniversityType] = useState('');
+  const [intraUniversityTypeNotHere, setIntraUniversityTypeNotHere] = useState(false);
   const [participants, setParticipants] = useState(''); // JSON or comma-separated
   const [tags, setTags] = useState(''); // comma-separated
   const [loading, setLoading] = useState(false);
@@ -153,11 +163,10 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
         formData.append('thumbnail', thumbnail);
       }
 
-      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/videos/upload-youtube`, formData, {
+      const res = await customAxios.post(`/videos/upload-youtube`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true
+        }
       });
       
       console.log('File uploaded successfully:', res.data);
@@ -384,16 +393,38 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
           <label htmlFor="intraUniversityType" className="block text-gray-700 dark:text-gray-300">
             Intra-University Type
           </label>
-          <input
-            type="text"
+          {
+            intraUniversityTypeNotHere ?  
+            <input
+              type="text"
+              id="intraUniversityType"
+              value={intraUniversityType}
+              onChange={(e) => setIntraUniversityType(e.target.value)}
+              className="w-full px-3 py-2 rounded-md border dark:bg-gray-700 dark:text-white"
+              placeholder="HOD Game, Deans Game, VC's Game, Freshers Game"
+              required
+              disabled={loading || isProcessing}
+            />
+            : 
+           <select
             id="intraUniversityType"
             value={intraUniversityType}
-            onChange={(e) => setIntraUniversityType(e.target.value)}
+            onChange={(e) => {
+              if(e.target.value === 'Not here'){
+                setIntraUniversityTypeNotHere(true)
+              } else{
+                setIntraUniversityType(e.target.value)
+              }
+            }}
             className="w-full px-3 py-2 rounded-md border dark:bg-gray-700 dark:text-white"
-            placeholder="HOD Game, Deans Game, VC's Game, Freshers Game"
             required
             disabled={loading || isProcessing}
-          />
+            >
+          {IntraUniversityOptions.map((option) => (
+            <option key={option} value={option}>{option}</option>
+          ))}
+        </select>
+          }
         </div>
       )}
       <div className="">

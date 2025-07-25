@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
@@ -22,10 +22,15 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  let expired = params.get('expired');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    expired = ""
 
     try {
       const formData = username ? { 
@@ -111,6 +116,8 @@ const LoginPage = () => {
                 )}
               </div>
             )}
+
+            {expired && <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">Login expired, please login again.</div>}
 
             <div className="mb-4">
               <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2" htmlFor="username">
