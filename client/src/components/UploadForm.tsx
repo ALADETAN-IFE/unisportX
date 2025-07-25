@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 // import { facultyOptions } from "../utils/datas"
 import useVideoEditor from '../hooks/useVideoEditor';
 import { fetchCountries, fetchUniversities, type Country, type University } from '../utils/universitySelector';
+import Select from 'react-select';
+import { selectCustomStyles } from '../utils/reactSelectStyle';
 
 const eventTypeOptions = [
   'Inter-University',
@@ -306,21 +308,19 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div>
           <label htmlFor="schoolName" className="block text-gray-700 dark:text-gray-300">School Name</label>
-          <select
+          <Select
             id="schoolName"
-            value={schoolName}
-            onChange={(e) => setSchoolName(e.target.value)}
-            className="w-full px-3 py-2 rounded-md border dark:bg-gray-700 dark:text-white"
+            value={universities.find(uni => uni.name === schoolName) || null}
+            onChange={option => setSchoolName(option ? option.name : '')}
+            options={universities}
+            getOptionLabel={option => option.name}
+            getOptionValue={option => option.name}
+            isDisabled={loading || isProcessing || loadingUniversities || !country}
+            placeholder="- Select University -"
+            isClearable
             required
-            disabled={loading || isProcessing || loadingUniversities || !country}
-          >
-            <option value="">-- Select University --</option>
-            {universities.map((uni) => (
-              <option key={uni.name} value={uni.name}>
-                {uni.name}
-              </option>
-            ))}
-          </select>
+            styles={selectCustomStyles}
+          />
           {loadingUniversities && <p className="text-xs text-gray-500 mt-1">Loading universities...</p>}
         </div>
         <div>
