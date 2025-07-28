@@ -139,6 +139,7 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
     setMessage('');
 
     try {
+      setError('')
       const formData = new FormData();
       formData.append('title', title);
       formData.append('description', description);
