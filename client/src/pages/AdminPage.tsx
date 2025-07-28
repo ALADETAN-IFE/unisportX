@@ -31,6 +31,10 @@ const AdminPage = () => {
 
   useEffect(() => {
     fetchData(true);
+  }, []);
+
+  useEffect(() => {
+    fetchData(false);
   }, [activeTab]);
 
   const fetchData = async (onPageLoad: boolean = false) => {
@@ -38,7 +42,13 @@ const AdminPage = () => {
       setLoading(true);
       setError(null);
 
-      if (activeTab === 'videos' || onPageLoad === true) {
+      if (onPageLoad === true){
+        const resVideos = await customAxios.get(`/videos/get-videos`);
+        const resUsers = await customAxios.get(`/admin/users/all-user`);
+        
+        setVideos(resVideos.data.videos || []);
+        setUsers(resUsers.data || []);
+      } else if (activeTab === 'videos') {
         const res = await customAxios.get(`/videos/get-videos`);
         setVideos(res.data.videos || []);
       } else {
