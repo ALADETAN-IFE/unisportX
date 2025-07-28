@@ -2,9 +2,19 @@ const User = require('../models/User');
 
 exports.allUser = async (req, res) => {
     try {
-        // const users = await User.find()
-        const users = await User.find({},  { password: 0, resetPasswordExpires: 0, resetPasswordToken: 0 }); // Exclude some field
-        res.status(200).json(users);
+      // const users = await User.find()
+      const users = await User.find(
+        {},
+        {
+          password: 0,
+          resetPasswordExpires: 0,
+          resetPasswordToken: 0,
+          verificationToken: 0,
+          isVerified: 0,
+          verificationTokenExpires: 0,
+        }
+      ); // Exclude some field
+      res.status(200).json(users);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Something went wrong' });
