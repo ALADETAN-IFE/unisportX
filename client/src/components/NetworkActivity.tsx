@@ -32,7 +32,7 @@ const NetworkActivity = () => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className={`fixed bottom-6 flex justify-center w-full transform -translate-x-1/2 z-100`}
+          className={`fixed bottom-6 flex justify-center w-full transform -translate-x-1/2 z-1000`}
           // className={`fixed bottom-6 left-[37%] md:left-[46%] transform -translate-x-1/2 z-50 bg-black`}
         >
           <div
