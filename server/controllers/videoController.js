@@ -189,7 +189,7 @@ exports.uploadVideo = async (req, res) => {
 
 exports.getVideos = async (req, res) => {
   try {
-    const videos = await Video.find().sort({ uploadTime: -1 });
+    const videos = await Video.find().sort({ uploadTime: -1 }).populate('uploadedBy', 'username email profilePicture');
     if (!videos || videos.length === 0) {
       return res.status(404).json({ message: 'No videos found', videos: [] });
     }

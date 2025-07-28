@@ -5,24 +5,11 @@ import { toast } from 'react-toastify';
 import { motion } from 'motion/react';
 import SEO from '../components/SEO';
 import { getFacultyColor } from "../utils/datas";
-import type { UserData } from '../interface';
-
-interface IVideo {
-  _id: string;
-  title: string;
-  faculty: string;
-  youtubeLink: string;
-  description: string;
-  createdAt?: string;
-  uploadDate?: string;
-  userId?: string;
-  userEmail?: string;
-}
-
+import type { UserData, Video } from '../interface';
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState<'videos' | 'users'>('videos');
-  const [videos, setVideos] = useState<IVideo[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -130,10 +117,11 @@ const AdminPage = () => {
 
 
   const filteredVideos = videos.filter(video => {
-    const matchesFaculty = selectedFaculty === 'all' || video.faculty === selectedFaculty;
+    const faculty = video.school?.faculty || '';
+    const matchesFaculty = selectedFaculty === 'all' || faculty === selectedFaculty;
     const matchesSearch = video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          video.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         video.userEmail?.toLowerCase().includes(searchTerm.toLowerCase());
+                         video.uploadedBy.email.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFaculty && matchesSearch;
   });
 
@@ -143,7 +131,7 @@ const AdminPage = () => {
            user.faculty?.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const uniqueFaculties = [...new Set(videos.map(video => video.faculty))];
+  const uniqueFaculties = [...new Set(videos.map(video => video.school?.faculty).filter(Boolean))];
 
   if (loading) {
     return (
@@ -278,8 +266,8 @@ const AdminPage = () => {
                       {video.title}
                     </h3>
                     <div className="flex items-center justify-between">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFacultyColor(video.faculty)}`}>
-                        {video.faculty}
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFacultyColor(video.school?.faculty || 'Other')}`}>
+                         {video.school?.faculty || 'N/A'}
                       </span>
                       {video.createdAt && (
                         <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -290,9 +278,9 @@ const AdminPage = () => {
                     <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
                       {video.description}
                     </p>
-                    {video.userEmail && (
+                    {video.uploadedBy.email && (
                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Uploaded by: {video.userEmail}
+                        Uploaded by: {video.uploadedBy.email}
                       </p>
                     )}
                     <div className="flex gap-2 pt-2">

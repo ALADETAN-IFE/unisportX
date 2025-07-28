@@ -79,6 +79,8 @@ export interface Video {
     email: string;
     profilePicture?: string;
   };
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type FeedItem = Post | Video;
