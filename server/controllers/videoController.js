@@ -35,7 +35,7 @@ exports.uploadVideo = async (req, res) => {
     const existingUser = await User.findById(userId);
 
     // Playlist logic (can use schoolName or faculty for playlist)
-    const playlistName = `${schoolName || schoolFaculty}(${year})`;
+    const playlistName = `${schoolFaculty || eventType} (${schoolName}) (${year})`;
 
     // STEP 1: Check if playlist exists
     const playlists = await youtube.playlists.list({
@@ -56,7 +56,7 @@ exports.uploadVideo = async (req, res) => {
         requestBody: {
           snippet: {
             title: playlistName,
-            description: `Playlist for ${schoolFaculty || schoolName} (${year})`,
+            description: `Playlist for ${schoolFaculty + "Games" || eventType} (${year})`,
           },
           status: {
             privacyStatus: "unlisted",
