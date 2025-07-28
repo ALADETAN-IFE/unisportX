@@ -2,8 +2,8 @@ const User = require('../models/User');
 
 exports.allUser = async (req, res) => {
     try {
-        const users = await User.find()
-        // const users = await User.find({}, '-password'); // Exclude password field
+        // const users = await User.find()
+        const users = await User.find({},  { password: 0, resetPasswordExpires: 0, resetPasswordToken: 0 }); // Exclude some field
         res.status(200).json(users);
     } catch (error) {
         console.error(error);
