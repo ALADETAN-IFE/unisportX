@@ -137,7 +137,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
                     Feed
                   </Link>
                 )}
-                {role === "admin" && location.pathname !== '/app/admin' && (
+                {role === "admin" && location.pathname !== '/app/manage' && (
                   <Link 
                     to="/app/manage"
                     className="flex gap-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition duration-200 text-sm"
@@ -259,7 +259,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
                       Feed
                     </Link>
                   )}
-                  {role === "admin" && location.pathname !== '/app/admin' && (
+                  {role === "admin" && location.pathname !== '/app/manage' && (
                     <Link 
                       to="/app/manage"
                       className="flex gap-1 px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 transition duration-200 text-sm"
