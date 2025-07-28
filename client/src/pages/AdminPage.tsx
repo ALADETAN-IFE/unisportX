@@ -30,15 +30,15 @@ const AdminPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetchData();
+    fetchData(true);
   }, [activeTab]);
 
-  const fetchData = async () => {
+  const fetchData = async (onPageLoad: boolean = false) => {
     try {
       setLoading(true);
       setError(null);
 
-      if (activeTab === 'videos') {
+      if (activeTab === 'videos' || onPageLoad === true) {
         const res = await customAxios.get(`/videos/get-videos`);
         setVideos(res.data.videos || []);
       } else {
@@ -66,7 +66,7 @@ const AdminPage = () => {
     try {
       await customAxios.delete(`/admin/users/videos/${videoId}`);
       toast.success('Video deleted successfully');
-      fetchData();
+      fetchData(false);
     } catch (err) {
       toast.error('Failed to delete video');
       console.error('Delete video error:', err);
@@ -79,7 +79,7 @@ const AdminPage = () => {
     try {
       await customAxios.delete(`/admin/users/delete-user/${userId}`);
       toast.success('User deleted successfully');
-      fetchData();
+      fetchData(false);
     } catch (err) {
       toast.error('Failed to delete user');
       console.error('Delete user error:', err);
@@ -94,7 +94,7 @@ const AdminPage = () => {
         withCredentials: true
       });
       toast.success(`User ${isActive ? 'deactivated' : 'activated'} successfully`);
-      fetchData();
+      fetchData(false);
     } catch (err) {
       toast.error('Failed to update user status');
       console.error('Toggle user status error:', err);
@@ -157,7 +157,7 @@ const AdminPage = () => {
           </svg>
           <p className="text-lg font-medium">{error}</p>
           <button 
-            onClick={fetchData}
+            onClick={() => fetchData(false)}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
             Try Again
