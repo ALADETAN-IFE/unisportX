@@ -509,95 +509,107 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
       </div>
 
       {/* Video Preview and Editor */}
-      {videoFile && previewUrl && (
-        <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-          <h3 className="font-semibold text-gray-800 dark:text-white">Video Editor</h3>
-          
-          {/* Video Preview */}
-          <div className="relative">
-            <video
-              ref={videoRef}
-              src={previewUrl}
-              controls
-              className="w-full rounded-md"
-              muted={muted}
-            />
-            {isProcessing && (
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md">
-                <div className="text-white text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
-                  <p>Processing video...</p>
+      {videoFile && (
+        <>
+          {console.log('Video preview debug:', { videoFile: !!videoFile, previewUrl: !!previewUrl, videoFileName: videoFile?.name })}
+          <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <h3 className="font-semibold text-gray-800 dark:text-white">Video Editor</h3>
+            
+            {/* Video Preview */}
+            <div className="relative">
+              {previewUrl ? (
+                <video
+                  ref={videoRef}
+                  src={previewUrl}
+                  controls
+                  className="w-full rounded-md"
+                  muted={muted}
+                />
+              ) : (
+                <div className="w-full h-48 bg-gray-200 dark:bg-gray-600 rounded-md flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                    <p className="text-gray-600 dark:text-gray-400">Loading video preview...</p>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* Video Controls */}
-          {/* Mute Toggle */}
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input 
-              type="checkbox" 
-              checked={muted} 
-              onChange={handleMuteToggle}
-              className="rounded"
-            />
-            <span className="text-gray-700 dark:text-gray-300">Mute Video</span>
-          </label>
-          {/* Trim Controls */}
-          {duration > 0 && (
-            <div className="space-y-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Trim Video ({formatTime(startTime)} - {formatTime(endTime || duration)})
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-xs text-gray-600 dark:text-gray-400">Start Time</label>
-                  <input
-                    type="range"
-                    min={0}
-                    max={duration}
-                    step={0.1}
-                    value={startTime}
-                    onChange={(e) => handleTrimChange(Number(e.target.value), endTime || duration)}
-                    className="w-full"
-                    disabled={isProcessing}
-                  />
-                  <span className="text-xs text-gray-500">{formatTime(startTime)}</span>
+              )}
+              {isProcessing && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-md">
+                  <div className="text-white text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+                    <p>Processing video...</p>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs text-gray-600 dark:text-gray-400">End Time</label>
-                  <input
-                    type="range"
-                    min={0}
-                    max={duration}
-                    step={0.1}
-                    value={endTime || duration}
-                    onChange={(e) => handleTrimChange(startTime, Number(e.target.value))}
-                    className="w-full"
-                    disabled={isProcessing}
-                  />
-                  <span className="text-xs text-gray-500">{formatTime(endTime || duration)}</span>
-                </div>
-              </div>
+              )}
             </div>
-          )}
-          {/* Thumbnail Generation */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => generateThumbnail()}
-              disabled={isProcessing}
-              className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-            >
-              Generate Thumbnail
-            </button>
-            {thumbnail && (
-              <span className="text-xs text-green-600 dark:text-green-400">
-                ✓ Thumbnail ready
-              </span>
+
+            {/* Video Controls */}
+            {/* Mute Toggle */}
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input 
+                type="checkbox" 
+                checked={muted} 
+                onChange={handleMuteToggle}
+                className="rounded"
+              />
+              <span className="text-gray-700 dark:text-gray-300">Mute Video</span>
+            </label>
+            {/* Trim Controls */}
+            {duration > 0 && (
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Trim Video ({formatTime(startTime)} - {formatTime(endTime || duration)})
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-xs text-gray-600 dark:text-gray-400">Start Time</label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={duration}
+                      step={0.1}
+                      value={startTime}
+                      onChange={(e) => handleTrimChange(Number(e.target.value), endTime || duration)}
+                      className="w-full"
+                      disabled={isProcessing}
+                    />
+                    <span className="text-xs text-gray-500">{formatTime(startTime)}</span>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 dark:text-gray-400">End Time</label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={duration}
+                      step={0.1}
+                      value={endTime || duration}
+                      onChange={(e) => handleTrimChange(startTime, Number(e.target.value))}
+                      className="w-full"
+                      disabled={isProcessing}
+                    />
+                    <span className="text-xs text-gray-500">{formatTime(endTime || duration)}</span>
+                  </div>
+                </div>
+              </div>
             )}
+            {/* Thumbnail Generation */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => generateThumbnail()}
+                disabled={isProcessing}
+                className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+              >
+                Generate Thumbnail
+              </button>
+              {thumbnail && (
+                <span className="text-xs text-green-600 dark:text-green-400">
+                  ✓ Thumbnail ready
+                </span>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       <button 
