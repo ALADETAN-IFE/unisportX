@@ -10,7 +10,6 @@ exports.allUser = async (req, res) => {
           resetPasswordExpires: 0,
           resetPasswordToken: 0,
           verificationToken: 0,
-          isVerified: 0,
           verificationTokenExpires: 0,
         }
       ); // Exclude some field
