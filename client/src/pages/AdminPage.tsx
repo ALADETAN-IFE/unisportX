@@ -43,7 +43,7 @@ const AdminPage = () => {
         setVideos(res.data.videos || []);
       } else {
         const res = await customAxios.get(`/admin/users/all-user`);
-        setUsers(res.data.users || []);
+        setUsers(res.data || []);
       }
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -327,6 +327,9 @@ const AdminPage = () => {
                         Status
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Verified
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Joined
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -348,7 +351,7 @@ const AdminPage = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFacultyColor(user.faculty || 'Other')}`}>
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFacultyColor(user.faculty || 'Other')}`}> 
                             {user.faculty || 'N/A'}
                           </span>
                         </td>
@@ -362,6 +365,15 @@ const AdminPage = () => {
                               : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                           }`}>
                             {user.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            user.isVerified
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                              : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                          }`}>
+                            {user.isVerified ? 'Yes' : 'No'}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
