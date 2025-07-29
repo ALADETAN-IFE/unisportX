@@ -128,9 +128,9 @@ exports.googleAuth = async (req, res) => {
     let user = await User.findOne({ email });
     let existingName = await User.findOne({ username: name.toLowerCase() });
     
-    console.log("name", name)
+    console.log("name:", name)
     // console.log("user", user)
-    console.log("existingName", existingName?.username)
+    console.log("existingName:", existingName?.username)
     if (!user) {
       // Create new user
       const username = !existingName ? name.toLowerCase().replace(/\s+/g, '') : name.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 1000);
