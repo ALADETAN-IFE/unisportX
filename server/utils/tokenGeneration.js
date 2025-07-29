@@ -8,8 +8,8 @@ exports.generateToken = (user, res) => {
       },
     };
 
-    // console.log("payload:", payload)
-    // console.log("user:", user)
+    console.log("payload:", payload)
+    console.log("user:", user)
     
     const token = jwt.sign(
         payload,
@@ -17,9 +17,9 @@ exports.generateToken = (user, res) => {
         { expiresIn: '7d' }
     );
 
-    // console.log("token generated", token)
+    console.log("token generated", token)
 
-    res.cookie('token', token, {
+    res.cookie('token', token | "hello", {
         httpOnly: true,
         secure:  process.env.NODE_ENV === 'production', 
         maxAge: 60 * 60 * 24 * 7 * 1000, // 7 days
