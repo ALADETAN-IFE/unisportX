@@ -130,7 +130,7 @@ exports.googleAuth = async (req, res) => {
     
     console.log("name", name)
     // console.log("user", user)
-    console.log("existingName", existingName.username)
+    console.log("existingName", existingName?.username)
     if (!user) {
       // Create new user
       const username = !existingName ? name.toLowerCase().replace(/\s+/g, '') : name.toLowerCase().replace(/\s+/g, '') + Math.floor(Math.random() * 1000);
