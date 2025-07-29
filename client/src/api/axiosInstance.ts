@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { checkAuth } from '../utils/auth';
-// import { logOut } from "../global/Redux-actions/actions";
+import { forceLogout } from '../utils/user';
 // import { useDispatch } from "react-redux";
 
 const instance = axios.create({
@@ -12,7 +12,7 @@ instance.interceptors.request.use(async (config) => {
     // const dispatch = useDispatch();
     const isAuthenticated = await checkAuth();
   if (!isAuthenticated) {
-      // dispatch(logOut());
+      forceLogout();
     window.location.href = '/login?expired=1';
     throw new axios.Cancel('Session expired');
   }

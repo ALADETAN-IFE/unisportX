@@ -8,8 +8,8 @@ exports.generateToken = (user, res) => {
       },
     };
 
-    console.log("payload:", payload)
-    console.log("user:", user)
+    // console.log("payload:", payload)
+    // console.log("user:", user)
     
     const token = jwt.sign(
         payload,
@@ -17,7 +17,7 @@ exports.generateToken = (user, res) => {
         { expiresIn: '7d' }
     );
 
-    console.log("token generated", token)
+    // console.log("token generated", token)
 
     res.cookie('token', token, {
         httpOnly: true,
