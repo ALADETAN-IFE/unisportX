@@ -19,7 +19,7 @@ exports.generateToken = (user, res) => {
 
     console.log("token generated", token)
 
-    res.cookie('token', token | "hello", {
+    res.cookie('token', token, {
         httpOnly: true,
         secure:  process.env.NODE_ENV === 'production', 
         maxAge: 60 * 60 * 24 * 7 * 1000, // 7 days
