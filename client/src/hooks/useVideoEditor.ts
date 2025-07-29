@@ -48,11 +48,13 @@ const useVideoEditor = (): VideoEditorState & VideoEditorActions => {
   }, [previewUrl]);
 
   const handleVideoSelect = useCallback((file: File) => {
+    console.log('handleVideoSelect called with file:', file.name, file.type);
     try {
       setError(null);
       
       // Validate file type
       if (!file.type.startsWith('video/')) {
+        console.log('Invalid file type:', file.type);
         setError('Please select a valid video file');
         return;
       }
@@ -60,25 +62,31 @@ const useVideoEditor = (): VideoEditorState & VideoEditorActions => {
       // Note: File size validation removed - no maximum limit
       // Users are advised that larger files may take longer to upload depending on network
 
-    setVideoFile(file);
+      console.log('Setting videoFile state');
+      setVideoFile(file);
       
       // Create preview URL
-    const url = URL.createObjectURL(file);
+      console.log('Creating preview URL');
+      const url = URL.createObjectURL(file);
+      console.log('Preview URL created:', url);
       setPreviewUrl(url);
 
       // Get video duration
       const video = document.createElement('video');
-    video.src = url;
+      video.src = url;
       video.onloadedmetadata = () => {
+        console.log('Video metadata loaded, duration:', video.duration);
         setDuration(video.duration);
         setEndTime(video.duration);
         // Generate thumbnail at 1 second
         generateThumbnail(1);
       };
       video.onerror = () => {
+        console.log('Video load error');
         setError('Failed to load video file');
       };
     } catch (err) {
+      console.log('Error in handleVideoSelect:', err);
       setError('Error processing video file');
       console.error('Video selection error:', err);
     }

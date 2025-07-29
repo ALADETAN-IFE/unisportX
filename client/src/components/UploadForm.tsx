@@ -467,11 +467,16 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
             setIsDragOver(false);
             
             const files = Array.from(e.dataTransfer.files);
+            console.log('Dropped files:', files);
             const videoFile = files.find(file => file.type.startsWith('video/'));
+            console.log('Found video file:', videoFile);
             
             if (videoFile) {
+              console.log('Calling handleVideoSelect with:', videoFile.name);
               handleVideoSelect(videoFile);
+              console.log('handleVideoSelect called');
             } else {
+              console.log('No video file found in dropped files');
               setMessage('Please drop a valid video file.');
             }
           }}

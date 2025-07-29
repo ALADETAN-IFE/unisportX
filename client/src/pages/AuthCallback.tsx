@@ -1,8 +1,8 @@
 // src/pages/AuthCallback.tsx
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-// import axios from "axios";
-import customAxios from '../api/axiosInstance.ts';
+import axios from "axios";
+// import customAxios from '../api/axiosInstance.ts';
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { login as reduxLogin } from '../utils/user';
@@ -58,7 +58,7 @@ const AuthCallback = () => {
         }
         // Send the access token to your backend
         // Send the ID token to your backend
-        const response = await customAxios.post(
+        const response = await axios.post(
           `/auth/google`,
           { token: idToken }
         );
