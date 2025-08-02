@@ -97,7 +97,8 @@ exports.login = async (req, res) => {
       user.resetPasswordExpires = undefined;
     }
 
-   generateToken(user, res)
+    // Generate JWT token and set cookie
+    generateToken(user, res)
 
     const { password: _, ...userWithoutPassword } = user._doc;
         

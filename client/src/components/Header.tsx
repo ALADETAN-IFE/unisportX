@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-// import axios from 'axios';
-import customAxios from '../api/axiosInstance.ts';
+import axios from 'axios';
+// import customAxios from '../api/axiosInstance.ts';
 // import { motion } from 'framer-motion';
 import { motion } from 'motion/react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -80,7 +80,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
   const handleLogout = async () => {
     try {
       setisLoggingOut(true)
-      await customAxios.post(`/auth/logout`, {});
+      await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/logout`, {});
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
