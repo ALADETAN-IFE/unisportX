@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import customAxios from '../api/axiosInstance.ts';
 import { toast } from 'react-toastify';
-import { motion } from 'motion/react';
+// import { motion } from 'motion/react';
 import SEO from '../components/SEO';
-import { getFacultyColor } from "../utils/datas";
 import type { UserData, Video } from '../interface';
+import AdminViewVideos from '../components/Admin/AdminViewVideos';
+import AdminViewUsers from '../components/Admin/AdminViewUsers.tsx';
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState<'videos' | 'users'>('videos');
@@ -96,12 +97,6 @@ const AdminPage = () => {
       toast.error('Failed to update user status');
       console.error('Toggle user status error:', err);
     }
-  };
-
-  const getYouTubeEmbedUrl = (url: string) => {
-    const videoIdWithParams = url.split('v=')[1];
-    const videoId = videoIdWithParams ? videoIdWithParams.split('&')[0] : '';
-    return `https://www.youtube.com/embed/${videoId}?modestbranding=1&rel=0&showinfo=0`;
   };
 
   const formatDate = (dateString: string) => {
@@ -242,68 +237,13 @@ const AdminPage = () => {
           {activeTab === 'videos' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredVideos.map((video, index) => (
-                <motion.div
-                  key={video._id}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                  <div className="relative aspect-video">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src={getYouTubeEmbedUrl(video.youtubeLink)}
-                      title={video.title}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="absolute inset-0 w-full h-full"
-                    />
-                  </div>
-                  <div className="p-4 space-y-3">
-                    <h3 className="font-bold text-gray-800 dark:text-white text-lg line-clamp-2">
-                      {video.title}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFacultyColor(video.school?.faculty || 'Other')}`}>
-                         {video.school?.faculty || 'N/A'}
-                      </span>
-                      {video.createdAt && (
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {formatDate(video.createdAt)}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
-                      {video.description}
-                    </p>
-                    {video.uploadedBy.email && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Uploaded by: {video.uploadedBy.email}
-                      </p>
-                    )}
-                    <div className="flex gap-2 pt-2">
-                      <a
-                        href={video.youtubeLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 bg-red-600 text-white text-center py-2 px-3 rounded-md text-sm font-medium hover:bg-red-700 transition-colors"
-                      >
-                        View
-                      </a>
-                      <button
-                        onClick={() => deleteVideo(video._id)}
-                        className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                        title="Delete video"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
+               <AdminViewVideos 
+                key={video._id} 
+                video={video} 
+                index={index} 
+                deleteVideo={deleteVideo} 
+                formatDate={formatDate}
+                />
               ))}
             </div>
           ) : (
@@ -337,67 +277,13 @@ const AdminPage = () => {
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                     {filteredUsers.map((user) => (
-                      <tr key={user._id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white">
-                              {user.username || 'N/A'}
-                            </div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              {user.email}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${getFacultyColor(user.faculty || 'Other')}`}> 
-                            {user.faculty || 'N/A'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                          {user.role || 'User'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            user.isActive 
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                              : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                          }`}>
-                            {user.isActive ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            user.isVerified
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                              : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                          }`}>
-                            {user.isVerified ? 'Yes' : 'No'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                          {user.createdAt ? formatDate(user.createdAt) : 'N/A'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => toggleUserStatus(user._id, user.isActive || false)}
-                              className={`px-2 py-1 rounded text-xs ${
-                                user.isActive
-                                  ? 'bg-yellow-500 text-white hover:bg-yellow-600'
-                                  : 'bg-green-500 text-white hover:bg-green-600'
-                              }`}
-                            >
-                              {user.isActive ? 'Deactivate' : 'Activate'}
-                            </button>
-                            <button
-                              onClick={() => deleteUser(user._id)}
-                              className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                     <AdminViewUsers 
+                      key={user._id} 
+                      user={user} 
+                      deleteUser={deleteUser} 
+                      formatDate={formatDate}
+                      toggleUserStatus={toggleUserStatus}
+                      />
                     ))}
                   </tbody>
                 </table>
