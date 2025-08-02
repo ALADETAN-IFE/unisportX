@@ -24,8 +24,13 @@ const AuthCallback = () => {
     
     const handleCallback = async () => {
       try {
+        // Clear any existing cookies to prevent conflicts
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         
-      // console.log("hasProcessed 2", hasProcessed)
+        // Small delay to ensure cookies are cleared
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // console.log("hasProcessed 2", hasProcessed)
         // Get the access token from URL hash
         // Get the ID token from URL hash
         const hash = window.location.hash.substring(1);

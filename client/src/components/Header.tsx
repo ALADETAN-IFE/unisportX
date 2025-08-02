@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
 // import customAxios from '../api/axiosInstance.ts';
 // import { motion } from 'framer-motion';
-import { motion } from 'motion/react';
-import { useSelector, useDispatch } from 'react-redux';
+import { motion } from 'motion/rea v vvct';
+// import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import type { RootState } from '../global/Redux-Store/Store';
 import { Feed, Video } from '../assets/Icon';
 import { scrollToTop } from '../utils/scrollToTop';
-import { logOut } from '../global/Redux-actions/actions';
+// import { logOut } from '../global/Redux-actions/actions';
 import LogoutConfirm from './LogoutConfirm';
 import { toast } from 'react-toastify';
+import { forceLogout } from '../utils/user';
 
 interface ModeProps {
   darkMode: boolean;
@@ -23,7 +25,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
   const [isLoggingOut, setisLoggingOut] = useState(false);
   // const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { isLoggedIn, userData, role } = useSelector((state: RootState) => state.uniSportX);
 
   // Initialize dark mode from localStorage and system preference
@@ -80,11 +82,12 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
   const handleLogout = async () => {
     try {
       setisLoggingOut(true)
-      await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/logout`, {});
+      // await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/logout`, {});
+      await forceLogout();
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      dispatch(logOut());
+      // dispatch(logOut());
       setMobileMenuOpen(false);
       setShowLogoutConfirm(false);
       toast.success("You have logged out successfully")
