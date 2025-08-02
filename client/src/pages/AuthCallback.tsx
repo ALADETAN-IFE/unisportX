@@ -65,7 +65,8 @@ const AuthCallback = () => {
         // Send the ID token to your backend
         const response = await axios.post(
           `${import.meta.env.VITE_SERVER_URL}/auth/google`,
-          { token: idToken }
+          { token: idToken },
+          { withCredentials: true }
         );
 
         if (response.data.success) {
