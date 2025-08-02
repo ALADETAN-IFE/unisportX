@@ -19,7 +19,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   };
 
   const videoId = getYouTubeVideoId(video.youtubeLink);
-  const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+  const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?modestbranding=1&rel=0&showinfo=0` : null;
 
   return (
     <motion.div
