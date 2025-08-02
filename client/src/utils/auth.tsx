@@ -1,11 +1,15 @@
-// import axios from 'axios';
+import axios from 'axios';
 
 export async function checkAuth() {
-  const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/auth/check`, {
-    method: 'POST',
-    credentials: 'include',
-  });
-  if (res.status === 401) return false;
-  const data = await res.json();
-  return data.authenticated;
+  try {
+    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/check`, {}, {
+      withCredentials: true,
+    });
+    return response.data.authenticated;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      return false;
+    }
+    return false;
+  }
 }
