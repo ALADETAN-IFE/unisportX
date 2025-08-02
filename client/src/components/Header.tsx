@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 // import axios from 'axios';
 // import customAxios from '../api/axiosInstance.ts';
 // import { motion } from 'framer-motion';
-import { motion } from 'motion/rea v vvct';
+import { motion } from 'motion/react';
 // import { useSelector, useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../global/Redux-Store/Store';
