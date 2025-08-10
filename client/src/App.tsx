@@ -5,11 +5,13 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import InstallPrompt from './components/InstallPrompt';
 import NetworkActivity from './components/NetworkActivity';
+import { Analytics } from "@vercel/analytics"
 
 const App = () => {
   return (
     <>
       <NetworkActivity />
+      <Analytics />
       <InstallPrompt />
       <RouterProvider router={Routes} />
       <ToastContainer position='top-right' autoClose={2800} />

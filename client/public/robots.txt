@@ -1,8 +1,17 @@
 User-agent: *
 Allow: /
 
+# Crawl delay (optional - helps with server load)
+Crawl-delay: 1
+
 # Sitemap location
-Sitemap: https://unisportx.onrender.com/sitemap.xml
+Sitemap: https://unisport-x.vercel.app/sitemap.xml
+
+# Additional sitemaps
+Sitemap: https://unisport-x.vercel.app//fullsitemap.xml
+
+# Host directive (canonical domain)
+Host: https:///unisport-x.vercel.app
 
 # Disallow private areas
 Disallow: /app/

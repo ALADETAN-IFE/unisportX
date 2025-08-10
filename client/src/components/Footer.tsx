@@ -14,8 +14,8 @@ const Footer = () => {
         {/* Navigation Links */}
         <nav className="flex flex-wrap gap-6 text-sm font-medium">
           <Link to="/" className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition">Home</Link>
-          <Link to="/videos" className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition">Videos</Link>
-          <Link to="/feed" className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition">Feed</Link>
+          <Link to="/app/videos" className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition">Videos</Link>
+          <Link to="/app" className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition">Feed</Link>
           <span onClick={scrollToTop} className="text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition cursor-pointer">About</span>
         </nav>
         {/* Tagline & Socials */}
