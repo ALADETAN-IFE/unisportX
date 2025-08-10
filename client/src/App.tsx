@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import InstallPrompt from './components/InstallPrompt';
 import NetworkActivity from './components/NetworkActivity';
-import { Analytics } from "@vercel/analytics"
+import { Analytics }  from "@vercel/analytics/next"
 
 const App = () => {
   return (
