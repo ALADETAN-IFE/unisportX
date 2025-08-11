@@ -58,9 +58,9 @@ export default defineConfig({
       }
     })
   ],
-  resolve: {
-    alias: {
-      "@vercel/analytics": "@vercel/analytics/dist/browser/index.mjs"
-    }
-  }
+  // resolve: {
+  //   alias: {
+  //     "@vercel/analytics": "@vercel/analytics/dist/browser/index.mjs"
+  //   }
+  // }
 })
