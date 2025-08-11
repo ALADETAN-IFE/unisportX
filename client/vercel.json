@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/fullsitemap.xml",
-      "destination": "/api/sitemap"
+      "destination": "https://unisportx.onrender.com/sitemap.xml"
     }
   ]
 } 
