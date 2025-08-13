@@ -105,7 +105,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
 
   return (
     <header className="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50">
-      <nav className="container mx-auto px-4 py-3">
+      <nav className="container mx-auto px-4 py-3 relative">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
@@ -231,7 +231,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
         {/* Mobile Navigation Menu */}
         {mobileMenuOpen && (
           <motion.div 
-            className="md:hidden mt-4 pb-4 border-t border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-gray-900 md:hidden mt-3 pb-4 border-t border-gray-200 dark:border-gray-700 absolute w-full overflow-hidden right-0 px-4"
             initial={{ opacity: 0, y: -500 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion, useInView } from 'motion/react';
 import axios from 'axios';
 import { features, testimonials } from "../utils/datas"
@@ -7,22 +7,16 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../global/Redux-Store/Store';
-import { toast } from 'react-toastify';
-
-interface IVideo {
-  _id: string;
-  title: string;
-  faculty: string;
-  description: string;
-  youtubeLink: string;
-}
+// import { toast } from 'react-toastify';
+import type { Video } from '../interface';
+import { useNetworkError } from '../utils/networkErr';
 
 const Home = () => {
-  const [videos, setVideos] = useState<IVideo[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
   const [loadingVideos, setLoadingVideos] = useState(true);
   const { isLoggedIn } = useSelector((state: RootState) => state.uniSportX);
 
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
 
   // Refs for intersection observer
@@ -39,28 +33,43 @@ const Home = () => {
   const testimonialsInView = useInView(testimonialsRef, { once: true, amount: 0.3 });
   const ctaInView = useInView(ctaRef, { once: true, amount: 0.3 });
 
-  useEffect(() => {
-    const hasVisited = localStorage.getItem('hasVisited');
-    if (hasVisited) {
-      if (isLoggedIn) {
-        toast.info("You can't see the homepage while you are logged in")
-        navigate('/app');
-      } else {
-        localStorage.setItem('hasVisited', 'false');
-      }
-    } else {
-      localStorage.setItem('hasVisited', 'true');
-    }
-  }, [isLoggedIn, navigate]);
+  // commented this out due to Google Search Console not being happy with the redirect
+  // useEffect(() => {
+  //   const hasVisited = localStorage.getItem('hasVisited');
+  //   if (hasVisited) {
+  //     if (isLoggedIn) {
+  //       toast.info("You can't see the homepage while you are logged in")
+  //       navigate('/app');
+  //     } else {
+  //       localStorage.setItem('hasVisited', 'false');
+  //     }
+  //   } else {
+  //     localStorage.setItem('hasVisited', 'true');
+  //   }
+  // }, [isLoggedIn, navigate]);
+
+
+  const { networkError } = useNetworkError();
+
+  // console.log("err", hasNetworkError)
 
   useEffect(() => {
     // Fetch videos (only 3 for non-logged in users)
     const fetchVideos = async () => {
+      networkError({ isError: false }) 
       try {
         setLoadingVideos(true)
         const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/videos/get-videos`);
         const allVideos = res.data.videos;
+        networkError({ isError: false }) 
+        // Shuffle the array to get a random order
+        for (let i = allVideos.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allVideos[i], allVideos[j]] = [allVideos[j], allVideos[i]];
+        }
+
         // Show only 3 videos
+        // Show only 3 videos (the first 3 from the shuffled array)
         if(allVideos.length > 3){
           setVideos(allVideos.slice(0, 3));
           return
@@ -69,6 +78,9 @@ const Home = () => {
         }
       } catch (err) {
         console.error('Error fetching videos:', err);
+        if(err instanceof Error && err.message == "Network Error"){
+          networkError({ isError: true }) 
+        }
       } finally{
         setLoadingVideos(false)
       }
@@ -217,7 +229,8 @@ const Home = () => {
                         />
                         <div className="p-4">
                           <h3 className="font-bold text-lg mb-2 text-gray-800 dark:text-white">{video.title}</h3>
-                          <p className="text-gray-600 dark:text-gray-400">Faculty: {video.faculty}</p>
+                          <p className="text-gray-600 dark:text-gray-400">Faculty: {video.school.faculty}</p>
+                          <p className="text-gray-600 dark:text-gray-400">{video.eventType}</p>
                           <p className="text-gray-500 dark:text-gray-300 text-sm mt-1">{video.description}</p>
                         </div>
                       </motion.div>

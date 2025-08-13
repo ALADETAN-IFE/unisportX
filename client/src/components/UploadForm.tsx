@@ -7,6 +7,8 @@ import useVideoEditor from '../hooks/useVideoEditor';
 import { fetchCountries, fetchUniversities, type Country, type University } from '../utils/universitySelector';
 import Select from 'react-select';
 import { selectCustomStyles } from '../utils/reactSelectStyle';
+  import { useNetworkError } from '../utils/networkErr';
+
 
 const eventTypeOptions = [
   'Inter-University',
@@ -47,6 +49,8 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
   const [loadingCountries, setLoadingCountries] = useState(false);
   const [loadingUniversities, setLoadingUniversities] = useState(false);
   const [error, setError] = useState('');
+  // const [netError, setnetError] = useState(false);
+  const { networkError } = useNetworkError();
   // const [file, setFile] = useState<File | null>(null);
 
   const {
@@ -80,16 +84,23 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
     }
   }, [videoFile, previewUrl]);
 
+
   // Fetch countries on component mount
   useEffect(() => {
     const loadCountries = async () => {
       setLoadingCountries(true);
+      setError("")
+      networkError({ isError: false }) 
       try {
         const countriesData = await fetchCountries();
         setCountries(countriesData);
+        networkError({ isError: false }) 
       } catch (err) {
         setError('Could not load countries.');
         console.error('Failed to fetch countries', err);
+        if(err instanceof Error && err.message == "Network Error"){
+          networkError({ isError: true }) 
+        }
       } finally {
         setLoadingCountries(false);
       }
@@ -105,14 +116,20 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
         setUniversities([]);
         return;
       }
+      setError("")
+      networkError({ isError: false }) 
 
       setLoadingUniversities(true);
       try {
         const universitiesData = await fetchUniversities(country);
         setUniversities(universitiesData);
+        networkError({ isError: false }) 
       } catch (err) {
         setError('Could not load universities.');
         console.error('Failed to fetch universities', err);
+        if(err instanceof Error && err.message == "Network Error"){
+          networkError({ isError: true }) 
+        }
       } finally {
         setLoadingUniversities(false);
       }
@@ -151,9 +168,13 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
       formData.append('schoolFaculty', schoolFaculty);
       // formData.append('schoolCampus', schoolCampus);
       // Format event type for Intra-University
-      const formattedEventType = eventType === 'Intra-University' && intraUniversityType 
-        ? `${eventType}(${intraUniversityType})` 
-        : eventType;
+      let formattedEventType; 
+      if(eventType === 'Intra-University' && intraUniversityType){ 
+         formattedEventType =`${eventType}(${intraUniversityType})` 
+      } else{
+        formattedEventType = eventType
+      }
+    
       formData.append('eventType', formattedEventType);
       
       formData.append('tags', tags);
@@ -255,6 +276,17 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
             : 'bg-red-100 border border-red-400 text-red-700 dark:bg-red-900 dark:border-red-600 dark:text-red-200'
         }`}>
           <span className="text-sm">{message}</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="p-3 rounded-md bg-red-100 border border-red-400 text-red-700 dark:bg-red-900 dark:border-red-600 dark:text-red-200">
+          <div className="flex items-start">
+            <svg className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <span className="text-sm">{error}</span>
+          </div>
         </div>
       )}
 
@@ -641,17 +673,6 @@ const UploadForm = ({ setLoadVideos, onSuccess }: { setLoadVideos: (loadVideos: 
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
             </svg>
             <span className="text-sm">{videoError}</span>
-          </div>
-        </div>
-      )}
-
-      {error && (
-        <div className="p-3 rounded-md bg-red-100 border border-red-400 text-red-700 dark:bg-red-900 dark:border-red-600 dark:text-red-200">
-          <div className="flex items-start">
-            <svg className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-            <span className="text-sm">{error}</span>
           </div>
         </div>
       )}
