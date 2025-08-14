@@ -161,7 +161,7 @@ exports.getPost = async (req, res) => {
   try {
     const postId = req.params.postId;
     const post = await Post.findById(postId)
-      .populate('author', 'username email')
+      .populate('author', 'username profilePicture')
       .populate('comments.user', 'username profilePicture')
       .populate('likes.user', 'username');
 
