@@ -134,7 +134,7 @@ const FeedPage = () => {
         </div>
 
         {/* Category Filter */}
-        <div className="mb-6">
+        <div className="pb-3 mb-3 sticky top-[64px] z-[55] bg-white dark:bg-gray-900">
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button
