@@ -58,7 +58,7 @@ app.use('/', sitemap);
 // });
 
 app.get('/', (req, res) => {
-  const filePath = path.join(__dirname, 'htmladn', 'welcome.html');
+  const filePath = path.join(__dirname, 'html', 'baseHtml.html');
   fs.readFile(filePath, 'utf8', (err, html) => {
     if (err) {
       res.status(500).send('Error loading page');
