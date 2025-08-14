@@ -129,15 +129,15 @@ postSchema.methods.addComment = function(userId, content) {
 
 // Method to remove comment
 postSchema.methods.removeComment = function(commentId, userId) {
-  this.comments = this.comments.filter(comment => 
-    comment._id.toString() !== commentId.toString() && 
-    comment.user._id.toString() === userId.toString()
-  );
+  // this.comments = this.comments.filter(comment => 
+  //   comment._id.toString() !== commentId.toString() && 
+  //   comment.user._id.toString() === userId.toString()
+  // );
 
-//   this.comments = this.comments.filter(comment => 
-//     comment._id.toString() !== commentId.toString() ||
-//     comment.user.toString() !== userId.toString()
-// );
+  this.comments = this.comments.filter(comment => 
+    comment._id.toString() !== commentId.toString() ||
+    comment.user.toString() !== userId.toString()
+);
   
   return this.save();
 };
