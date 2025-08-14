@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import customAxios from '../api/axiosInstance.ts';
 import { toast } from 'react-toastify';
@@ -7,9 +8,10 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../global/Redux-Store/Store';
 import EditPost from './EditPost';
 import DeletePostConfirm from './DeletePostConfirm';
-import Comment from '../components/Comment';
+// import Comment from '../components/Comment';
 import type { Post } from '../interface'
 import { formatRelativeTime } from "../utils/date"
+import { RiShareForwardFill } from "react-icons/ri";
 
 interface PostCardProps {
   post: Post;
@@ -17,14 +19,12 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
-  const [showComments, setShowComments] = useState(false);
-  const [newComment, setNewComment] = useState('');
-  const [commentLoading, setCommentLoading] = useState(false);
+  const navigate = useNavigate();
   const [localPost, setLocalPost] = useState(post);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  // const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const user = useSelector((state: RootState) => state.uniSportX.userData);
+  const { userData: user } = useSelector((state: RootState) => state.uniSportX);
 
   // Update local post when prop changes
   useEffect(() => {
@@ -112,59 +112,59 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
     }
   };
 
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // const handleAddComment = async (e: React.FormEvent) => {
+  //   e.preventDefault();
     
-    if (!user) {
-      toast.error('Please login to comment');
-      return;
-    }
+  //   if (!user) {
+  //     toast.error('Please login to comment');
+  //     return;
+  //   }
 
-    if (!newComment.trim()) {
-      toast.error('Please enter a comment');
-      return;
-    }
+  //   if (!newComment.trim()) {
+  //     toast.error('Please enter a comment');
+  //     return;
+  //   }
 
-    setCommentLoading(true);
-    try {
-      await customAxios.post(`/posts/${post._id}/comments`, {
-        content: newComment.trim()
-      });
+  //   setCommentLoading(true);
+  //   try {
+  //     await customAxios.post(`/posts/${post._id}/comments`, {
+  //       content: newComment.trim()
+  //     });
       
-      setNewComment('');
-      onPostUpdated();
-      toast.success('Comment added successfully');
-    } catch (error) {
-      console.error('Error adding comment:', error);
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data?.message || 'Error adding comment');
-      } else {
-        toast.error('Error adding comment');
-      }
-    } finally {
-      setCommentLoading(false);
-    }
-  };
+  //     setNewComment('');
+  //     onPostUpdated();
+  //     toast.success('Comment added successfully');
+  //   } catch (error) {
+  //     console.error('Error adding comment:', error);
+  //     if (axios.isAxiosError(error)) {
+  //       toast.error(error.response?.data?.message || 'Error adding comment');
+  //     } else {
+  //       toast.error('Error adding comment');
+  //     }
+  //   } finally {
+  //     setCommentLoading(false);
+  //   }
+  // };
 
-  const handleDeleteComment = async (commentId: string) => {
-    try {
-      setIsDeleting(true)
-      await customAxios.delete(`/posts/${post._id}/comments/${commentId}`);
+  // const handleDeleteComment = async (commentId: string) => {
+  //   try {
+  //     setIsDeleting(true)
+  //     await customAxios.delete(`/posts/${post._id}/comments/${commentId}`);
       
-      onPostUpdated();
-      toast.success('Comment deleted successfully');
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('Error deleting comment:', error);
-        const errorMessage = error.response?.data?.message || 'Error deleting comment';
-        toast.error(errorMessage);
-      } else {
-        toast.error('Something went wrong');
-      }
-    } finally {
-      setIsDeleting(false)
-    }
-  };
+  //     onPostUpdated();
+  //     toast.success('Comment deleted successfully');
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.error('Error deleting comment:', error);
+  //       const errorMessage = error.response?.data?.message || 'Error deleting comment';
+  //       toast.error(errorMessage);
+  //     } else {
+  //       toast.error('Something went wrong');
+  //     }
+  //   } finally {
+  //     setIsDeleting(false)
+  //   }
+  // };
 
   const handleEditPost = () => {
     setShowEditModal(true);
@@ -345,7 +345,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
 
                         className="flex items-center space-x-1 px-3 py-1 rounded-full text-sm transition-colors bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400"
                       >
-                        <span>{userReactionData.emoji}</span>
+                        <span>{userReactionData.emoji} {localPost?.likeCount}</span>
                         <span className="hidden sm:inline">{userReactionData.label}</span>
                       </button>
                     );
@@ -359,7 +359,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
                     onClick={() => handleReaction(firstReaction.type)}
                     className="flex items-center space-x-1 px-3 py-1 rounded-full text-sm transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
                   >
-                    <span>{firstReaction.emoji}</span>
+                    <span>{firstReaction.emoji} {localPost?.likeCount}</span>
                     <span className="hidden sm:inline">{firstReaction.label}</span>
                   </button>
                 );
@@ -388,64 +388,52 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
 
           {/* Comment Button */}
           <button
-            onClick={() => setShowComments(!showComments)}
+            onClick={() => {
+                if(location.pathname == '/app'){
+                  navigate(`/app/${post._id}`)
+                } 
+              }}
             className="flex items-center space-x-1 px-3 py-1 rounded-full text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
-            <span>{localPost.commentCount} Comments</span>
+            <span >{localPost.commentCount}</span>
+            <span className='hidden sm:inline'>Comments</span>
+          </button>
+
+          {/* Copy Button */}
+          {/* <button
+            onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success('Link copied to clipboard!');
+          }}
+            className="flex items-center space-x-1 px-3 py-1 rounded-full text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            <RiShareForwardFill size={16}/>
+            <span className='hidden sm:inline'> Copy Link</span>
+          </button> */}
+
+          {/* Share Button */}
+          <button
+            onClick={() => {
+              navigator.share?.({
+                  title: `Post by ${post.author.username}`,
+                  text: post.content.substring(0, 100),
+                  url: window.location.href
+              }).catch(() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success('Link copied to clipboard!');
+              });
+          }}
+            className="flex items-center space-x-1 px-3 py-1 rounded-full text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            <RiShareForwardFill size={16}/>
+            <span className='hidden sm:inline'> Share</span>
           </button>
         </div>
       </div>
 
-      {/* Comments Section */}
-      {showComments && (
-        <div className="border-t border-gray-200 dark:border-gray-700">
-          {/* Add Comment */}
-          <div className="p-4">
-            <form onSubmit={handleAddComment} className="flex space-x-2">
-              <input
-                type="text"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Write a comment..."
-                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                disabled={commentLoading}
-              />
-              <button
-                type="submit"
-                disabled={commentLoading || !newComment.trim()}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 transition-colors"
-              >
-                {commentLoading ? 'Posting...' : 'Post'}
-              </button>
-            </form>
-          </div>
-
-          {/* Comments List */}
-          <div className="px-4 pb-4 max-h-64 overflow-y-auto">
-            {localPost.comments.length === 0 ? (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-                No comments yet. Be the first to comment!
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {localPost.comments.map((comment) => (
-                  <Comment
-                    key={comment._id}
-                    comment={comment}
-                    user={user!}
-                    isDeleting={isDeleting}
-                    handleDeleteComment={handleDeleteComment}
-                    formatDate={formatRelativeTime}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
       
       {/* Edit Post Modal */}
       <EditPost

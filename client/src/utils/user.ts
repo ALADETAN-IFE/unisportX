@@ -16,10 +16,10 @@ export const forceLogout = async () => {
         await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/logout`, {}, { withCredentials: true });
     } catch {
         // Optionally log error or ignore
+    } finally {
+        store.dispatch(logOut());
     }
     
     // Clear client-side cookies as well
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    
-    store.dispatch(logOut());
 };

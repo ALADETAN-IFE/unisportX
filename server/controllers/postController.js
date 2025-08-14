@@ -159,9 +159,10 @@ exports.getPosts = async (req, res) => {
 // Get single post by ID
 exports.getPost = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id)
+    const postId = req.params.postId;
+    const post = await Post.findById(postId)
       .populate('author', 'username email')
-      .populate('comments.user', 'username')
+      .populate('comments.user', 'username profilePicture')
       .populate('likes.user', 'username');
 
     if (!post) {
@@ -325,7 +326,7 @@ exports.addComment = async (req, res) => {
     }
 
     await post.addComment(userId, content.trim());
-    await post.populate('comments.user', 'username');
+    await post.populate('comments.user', 'username profilePicture');
 
     res.json({
       message: 'Comment added successfully',
@@ -375,7 +376,7 @@ exports.getUserPosts = async (req, res) => {
       isPublic: true 
     })
       .populate('author', 'username email')
-      .populate('comments.user', 'username')
+      .populate('comments.user', 'username profilePicture')
       .populate('likes.user', 'username')
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)

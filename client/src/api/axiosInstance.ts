@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { checkAuth } from '../utils/auth';
 import { forceLogout } from '../utils/user';
-// import { useDispatch } from "react-redux";
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URL,
@@ -9,7 +8,6 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(async (config) => {
-    // const dispatch = useDispatch();
     const isAuthenticated = await checkAuth();
   if (!isAuthenticated) {
       forceLogout();

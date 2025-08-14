@@ -18,7 +18,6 @@ const Home = () => {
 
   // const navigate = useNavigate()
 
-
   // Refs for intersection observer
   const heroRef = useRef(null);
   const featuresRef = useRef(null);

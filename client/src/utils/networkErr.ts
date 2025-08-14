@@ -10,6 +10,18 @@ export function useNetworkError() {
     localStorage.setItem('networkError', JSON.stringify(hasNetworkError));
   }, [hasNetworkError]);
 
+  setTimeout(() => {
+    if (hasNetworkError) {
+      fetch('https://www.google.com')
+        .then(() => {
+          setHasNetworkError(false);
+        })
+        .catch(() => {
+          setHasNetworkError(true);
+        });
+    }
+  }, 3000);
+
   const networkError = (isError: { isError?: boolean }) => {
     if (isError && isError.isError) {
       setHasNetworkError(true);

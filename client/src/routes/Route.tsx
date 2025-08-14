@@ -15,6 +15,7 @@ import AdminRoute from "../layout/AdminRoute";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import TermsAndConditions from "../pages/TermsAndConditions";
 import AuthCallback from "../pages/AuthCallback";
+import PostPage from "../pages/PostPage";
 // import UniSelect from "../components/UniSelect";
 
 
@@ -75,9 +76,12 @@ const Routes = createBrowserRouter([
             element: <FeedPage />,
           },
           {
-            // index: true,
             path: "videos",
             element: <VideosPage />,
+          },
+          {
+            path: ":postId",
+            element: <PostPage />,
           },
           {
             path: "manage",
