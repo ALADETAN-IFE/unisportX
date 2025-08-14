@@ -70,6 +70,7 @@ const PostPage = () => {
 
         // Listen for new comments
         socket.on('comment-added', (newComment) => {
+            console.log('Received comment-added event:', newComment);
             setPost(prevPost => {
                 if (!prevPost) return prevPost;
                 return {
@@ -83,6 +84,7 @@ const PostPage = () => {
 
         // Listen for comment deletions
         socket.on('comment-removed', (commentId) => {
+            console.log('Received comment-removed event:', commentId);
             setPost(prevPost => {
                 if (!prevPost) return prevPost;
                 return {
@@ -131,19 +133,24 @@ const PostPage = () => {
           // Emit socket event for real-time updates
           emitNewComment(post._id, newCommentData);
           
-          // Add the new comment to local state immediately
-        //   setPost(prevPost => {
-        //     if (!prevPost) return prevPost;
-        //     return {
-        //       ...prevPost,
-        //       comments: [...prevPost.comments, newCommentData],
-        //       commentCount: prevPost.commentCount + 1
-        //     };
-        //   });
+          // Fallback: Update local state immediately if Socket.IO doesn't work
+          setTimeout(() => {
+            setPost(prevPost => {
+              if (!prevPost) return prevPost;
+              // Check if comment already exists (to avoid duplicates)
+              const commentExists = prevPost.comments.some(c => c._id === newCommentData._id);
+              if (!commentExists) {
+                return {
+                  ...prevPost,
+                  comments: [...prevPost.comments, newCommentData],
+                  commentCount: prevPost.commentCount + 1
+                };
+              }
+              return prevPost;
+            });
+          }, 100); // Small delay to allow Socket.IO event to fire first
           
           setNewComment('');
-        //   fetchPost(); // Refresh the post to get updated comments
-        //   toast.success('Comment added successfully');
         } catch (error) {
           console.error('Error adding comment:', error);
           if (axios.isAxiosError(error)) {
@@ -166,21 +173,26 @@ const PostPage = () => {
           setIsDeleting(true);
           await customAxios.delete(`/posts/${post._id}/comments/${commentId}`);
           
-          //   fetchPost(); // Refresh the post to get updated comments
           // Emit socket event for real-time updates
           emitCommentDeleted(post._id, commentId);
           
-          // Remove the comment from local state immediately
-        //   setPost(prevPost => {
-        //     if (!prevPost) return prevPost;
-        //     return {
-        //       ...prevPost,
-        //       comments: prevPost.comments.filter(comment => comment._id !== commentId),
-        //       commentCount: Math.max(0, prevPost.commentCount - 1)
-        //     };
-        //   });
+          // Fallback: Update local state immediately if Socket.IO doesn't work
+          setTimeout(() => {
+            setPost(prevPost => {
+              if (!prevPost) return prevPost;
+              // Check if comment still exists (to avoid errors)
+              const commentExists = prevPost.comments.some(c => c._id === commentId);
+              if (commentExists) {
+                return {
+                  ...prevPost,
+                  comments: prevPost.comments.filter(comment => comment._id !== commentId),
+                  commentCount: Math.max(0, prevPost.commentCount - 1)
+                };
+              }
+              return prevPost;
+            });
+          }, 100); // Small delay to allow Socket.IO event to fire first
           
-        //   toast.success('Comment deleted successfully');
         } catch (error) {
           if (axios.isAxiosError(error)) {
             console.error('Error deleting comment:', error);
