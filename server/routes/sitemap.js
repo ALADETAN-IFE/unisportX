@@ -26,7 +26,7 @@ router.get('/sitemap.xml', async (req, res) => {
     const posts = await Post.find({ isPublic: true }).limit(100);
     posts.forEach(post => {
       links.push({
-        url: `/post/${post._id}`,
+        url: `/app/${post._id}`,
         changefreq: 'daily',
         priority: 0.7,
       });
@@ -36,7 +36,7 @@ router.get('/sitemap.xml', async (req, res) => {
     const videos = await Video.find().limit(100);
     videos.forEach(video => {
       links.push({
-        url: `/video/${video._id}`,
+        url: `/app/video/${video._id}`,
         changefreq: 'daily',
         priority: 0.6,
       });

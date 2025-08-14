@@ -67,6 +67,10 @@ const Routes = createBrowserRouter([
       //   element: <UniSelect />,
       // },
       {
+        path: "app/:postId",
+        element: <PostPage />,
+      },
+      {
         path: "app",
         element: <PRroute />,
         children: [
@@ -78,10 +82,6 @@ const Routes = createBrowserRouter([
           {
             path: "videos",
             element: <VideosPage />,
-          },
-          {
-            path: ":postId",
-            element: <PostPage />,
           },
           {
             path: "manage",

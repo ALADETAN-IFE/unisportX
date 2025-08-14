@@ -33,9 +33,16 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
   useEffect(() => {
     // Create socket connection
-    const newSocket = io(import.meta.env.VITE_SERVER_URL || 'http://localhost:5000', {
+    const serverUrl = import.meta.env.VITE_SERVER_URL2 || 'http://localhost:5000';
+    console.log('Connecting to Socket.IO server:', serverUrl);
+    
+    const newSocket = io(serverUrl, {
       withCredentials: true,
-      transports: ['websocket', 'polling']
+      transports: ['websocket', 'polling'],
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000
     });
 
     // Connection event handlers
@@ -51,7 +58,16 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
     newSocket.on('connect_error', (error) => {
       console.error('Socket.IO connection error:', error);
+      console.error('Error message:', error.message);
       setIsConnected(false);
+    });
+
+    newSocket.on('reconnect_attempt', (attemptNumber) => {
+      console.log(`Socket.IO reconnection attempt ${attemptNumber}`);
+    });
+
+    newSocket.on('reconnect_failed', () => {
+      console.error('Socket.IO reconnection failed');
     });
 
     setSocket(newSocket);

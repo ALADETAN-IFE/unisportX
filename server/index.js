@@ -94,7 +94,11 @@ const server = require('http').createServer(app);
 //   }
 // });
 
-const io = new Server(server, { cors: corsOptions} );
+const io = new Server(server, { 
+  cors: corsOptions,
+  path: '/socket.io/',
+  transports: ['websocket', 'polling']
+});
 
 // Make Socket.IO instance available to controllers
 app.set('io', io);
@@ -120,6 +124,9 @@ io.on('connection', (socket) => {
     console.log('User disconnected:', socket.id);
   });
 });
+
+// Log Socket.IO server status
+console.log('Socket.IO server initialized on path: /socket.io/');
 
 const port = process.env.PORT || 5000;
 

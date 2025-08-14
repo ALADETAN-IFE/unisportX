@@ -122,29 +122,29 @@ const PostPage = () => {
     
         setCommentLoading(true);
         try {
-            // await customAxios.post(`/posts/${post._id}/comments`, {
-          const response = await customAxios.post(`/posts/${post._id}/comments`, {
+            await customAxios.post(`/posts/${post._id}/comments`, {
+        //   const response = await customAxios.post(`/posts/${post._id}/comments`, {
             content: newComment.trim()
           });
           
-          const newCommentData = response.data.comment;
+        //   const newCommentData = response.data.comment;
           
           // Emit socket event for real-time updates
         //   emitNewComment(post._id, newCommentData);
         
-          // Add the new comment to local state immediately
-          setPost(prevPost => {
-            if (!prevPost) return prevPost;
-            return {
-              ...prevPost,
-              comments: [...prevPost.comments, newCommentData],
-              commentCount: prevPost.commentCount + 1
-            };
-          });
+        //   // Add the new comment to local state immediately
+        //   setPost(prevPost => {
+        //     if (!prevPost) return prevPost;
+        //     return {
+        //       ...prevPost,
+        //       comments: [...prevPost.comments, newCommentData],
+        //       commentCount: prevPost.commentCount + 1
+        //     };
+        //   });
           
           setNewComment('');
         //   fetchPost(); // Refresh the post to get updated comments
-          toast.success('Comment added successfully');
+        //   toast.success('Comment added successfully');
         } catch (error) {
           console.error('Error adding comment:', error);
           if (axios.isAxiosError(error)) {
@@ -169,16 +169,16 @@ const PostPage = () => {
           
         //   fetchPost(); // Refresh the post to get updated comments
           // Remove the comment from local state immediately
-          setPost(prevPost => {
-            if (!prevPost) return prevPost;
-            return {
-              ...prevPost,
-              comments: prevPost.comments.filter(comment => comment._id !== commentId),
-              commentCount: Math.max(0, prevPost.commentCount - 1)
-            };
-          });
+        //   setPost(prevPost => {
+        //     if (!prevPost) return prevPost;
+        //     return {
+        //       ...prevPost,
+        //       comments: prevPost.comments.filter(comment => comment._id !== commentId),
+        //       commentCount: Math.max(0, prevPost.commentCount - 1)
+        //     };
+        //   });
           
-          toast.success('Comment deleted successfully');
+        //   toast.success('Comment deleted successfully');
         } catch (error) {
           if (axios.isAxiosError(error)) {
             console.error('Error deleting comment:', error);
