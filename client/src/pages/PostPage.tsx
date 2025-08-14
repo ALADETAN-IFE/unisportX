@@ -108,7 +108,7 @@ const PostPage = () => {
         e.preventDefault();
         
         if (!user) {
-          toast.error('Please login to comment');
+          toast.info('Please login to comment');
           return;
         }
     
