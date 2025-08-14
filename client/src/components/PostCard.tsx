@@ -417,12 +417,17 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
           {/* Share Button */}
           <button
             onClick={() => {
+              // Get the base URL of your application
+              const baseURL = window.location.origin;
+              // Construct the full URL for the specific post
+              const postURL = `${baseURL}/app/${post._id}`;
               navigator.share?.({
                   title: `Post by ${post.author.username}`,
                   text: post.content.substring(0, 100),
-                  url: window.location.href
+                  // url: window.location.href
+                  url: postURL
               }).catch(() => {
-                  navigator.clipboard.writeText(window.location.href);
+                  navigator.clipboard.writeText(postURL);
                   toast.success('Link copied to clipboard!');
               });
           }}
