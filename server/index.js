@@ -57,6 +57,15 @@ app.use('/', sitemap);
 //   `);
 // });
 
+// Look for code like this and update the policy
+app.use((req, res, next) => {
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://res.cloudinary.com http://res.cloudinary.com;"
+    );
+    next();
+  });
+
 app.get('/', (req, res) => {
   const filePath = path.join(__dirname, 'html', 'baseHtml.html');
   fs.readFile(filePath, 'utf8', (err, html) => {
