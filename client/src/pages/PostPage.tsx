@@ -26,7 +26,7 @@ const PostPage = () => {
     
 
     const { userData: user } = useSelector((state: RootState) => state.uniSportX);
-    const { socket, joinPost, leavePost } = useSocket();
+    const { socket, joinPost, leavePost, emitNewComment, emitCommentDeleted } = useSocket();
 
     const fetchPost = async () => {
         if (!postId) {
@@ -122,17 +122,16 @@ const PostPage = () => {
     
         setCommentLoading(true);
         try {
-            await customAxios.post(`/posts/${post._id}/comments`, {
-        //   const response = await customAxios.post(`/posts/${post._id}/comments`, {
+          const response = await customAxios.post(`/posts/${post._id}/comments`, {
             content: newComment.trim()
           });
           
-        //   const newCommentData = response.data.comment;
+          const newCommentData = response.data.comment;
           
           // Emit socket event for real-time updates
-        //   emitNewComment(post._id, newCommentData);
-        
-        //   // Add the new comment to local state immediately
+          emitNewComment(post._id, newCommentData);
+          
+          // Add the new comment to local state immediately
         //   setPost(prevPost => {
         //     if (!prevPost) return prevPost;
         //     return {
@@ -167,7 +166,10 @@ const PostPage = () => {
           setIsDeleting(true);
           await customAxios.delete(`/posts/${post._id}/comments/${commentId}`);
           
-        //   fetchPost(); // Refresh the post to get updated comments
+          //   fetchPost(); // Refresh the post to get updated comments
+          // Emit socket event for real-time updates
+          emitCommentDeleted(post._id, commentId);
+          
           // Remove the comment from local state immediately
         //   setPost(prevPost => {
         //     if (!prevPost) return prevPost;
