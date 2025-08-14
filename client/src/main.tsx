@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import { store, persistor } from './global/Redux-Store/Store'
 import LoadingScreen from './components/LoadingScreen'
+import { SocketProvider } from './context/SocketContext'
 
 // Register the PWA service worker
 // @ts-expect-error virtual:pwa-register is a Vite plugin that generates this module at build time
@@ -22,7 +23,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={<LoadingScreen/>} persistor={persistor}>
+        <SocketProvider>
           <App />
+        </SocketProvider>
       </PersistGate>
     </Provider>
   </React.StrictMode>,

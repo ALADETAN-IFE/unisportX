@@ -328,9 +328,18 @@ exports.addComment = async (req, res) => {
     await post.addComment(userId, content.trim());
     await post.populate('comments.user', 'username profilePicture');
 
+    // Get the newly added comment (last comment in the array)
+    const newComment = post.comments[post.comments.length - 1];
+
+    // Emit Socket.IO event for real-time updates
+    if (req.app.get('io')) {
+      req.app.get('io').to(`post-${postId}`).emit('comment-added', newComment);
+    }
+
     res.json({
       message: 'Comment added successfully',
-      comments: post.comments
+      // comments: post.comments
+      comment: newComment
     });
   } catch (error) {
     console.error('Error adding comment:', error);
@@ -354,9 +363,15 @@ exports.removeComment = async (req, res) => {
     await post.removeComment(commentId, userId);
     await post.populate('comments.user', 'username');
 
+    // Emit Socket.IO event for real-time updates
+    if (req.app.get('io')) {
+      req.app.get('io').to(`post-${postId}`).emit('comment-removed', commentId);
+    }
+
     res.json({
       message: 'Comment removed successfully',
-      comments: post.comments
+      // comments: post.comments
+      commentId: commentId
     });
   } catch (error) {
     console.error('Error removing comment:', error);

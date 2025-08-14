@@ -11,6 +11,8 @@ const sitemap = require('./routes/sitemap')
 const hipolabsUniRoutes = require('./routes/hipolabsUniRoutes')
 const helmet = require('helmet');
 const morgan = require('morgan');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
 
 const fs = require('fs');
 const path = require('path');
@@ -32,7 +34,8 @@ const corsOptions = {
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    exposedHeaders: ['Set-Cookie']
+    exposedHeaders: ['Set-Cookie'],
+    methods: ['GET', 'POST', 'DELETE', 'PATCH', 'PUT' ]
 }
 
 app.use(cors(corsOptions));
@@ -65,7 +68,6 @@ app.get('/', (req, res) => {
   });
 });
 
-
 // Handle invalid HTTP methods for existing routes
 app.use('/', (req, res, next) => {
   const allowedMethods = ['GET', 'POST']; // Add allowed methods as needed
@@ -81,12 +83,53 @@ app.use((req, res) => {
   res.status(404).send('Page not found');
 });
 
+const server = require('http').createServer(app);
+
+// Initialize Socket.IO
+// const io = require('socket.io')(server, {
+//   cors: {
+//     origin: process.env.CLIENT_URL || 'http://localhost:3000',
+//     credentials: true,
+//     methods: ['GET', 'POST']
+//   }
+// });
+
+const io = new Server(server, { cors: corsOptions} );
+
+// Make Socket.IO instance available to controllers
+app.set('io', io);
+
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  // Join a post room for real-time comments
+  socket.on('join-post', (postId) => {
+    socket.join(`post-${postId}`);
+    console.log(`User ${socket.id} joined post room: post-${postId}`);
+  });
+
+  // Leave a post room
+  socket.on('leave-post', (postId) => {
+    socket.leave(`post-${postId}`);
+    console.log(`User ${socket.id} left post room: post-${postId}`);
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
 const port = process.env.PORT || 5000;
 
 // Start server only after DB connection
 connectDB().then(() => {
-  app.listen(port, () => console.log(`Server started on port ${port}`));
+  server.listen(port, () => console.log(`Server started on port ${port}`));
 }).catch(() => {
   console.error('Failed to connect to MongoDB. Server not started.');
   process.exit(1);
 });
+
+// cd client && npm run dev
+// cd server && npm start

@@ -11,6 +11,7 @@ import type { Post } from '../interface';
 import type { RootState } from '../global/Redux-Store/Store';
 import Comment from '../components/Comment';
 import { formatRelativeTime } from '../utils/date';
+import { useSocket } from '../hooks/useSocket';
 
 const PostPage = () => {
   const { postId } = useParams();
@@ -25,6 +26,7 @@ const PostPage = () => {
     
 
     const { userData: user } = useSelector((state: RootState) => state.uniSportX);
+    const { socket, joinPost, leavePost } = useSocket();
 
     const fetchPost = async () => {
         if (!postId) {
@@ -59,6 +61,47 @@ const PostPage = () => {
         fetchPost();
     }, [postId]);
 
+    // Socket.IO event listeners for real-time comments
+    useEffect(() => {
+        if (!socket || !postId) return;
+
+        // Join the post room when component mounts
+        joinPost(postId);
+
+        // Listen for new comments
+        socket.on('comment-added', (newComment) => {
+            setPost(prevPost => {
+                if (!prevPost) return prevPost;
+                return {
+                    ...prevPost,
+                    comments: [...prevPost.comments, newComment],
+                    commentCount: prevPost.commentCount + 1
+                };
+            });
+            toast.success('New comment added!');
+        });
+
+        // Listen for comment deletions
+        socket.on('comment-removed', (commentId) => {
+            setPost(prevPost => {
+                if (!prevPost) return prevPost;
+                return {
+                    ...prevPost,
+                    comments: prevPost.comments.filter(comment => comment._id !== commentId),
+                    commentCount: Math.max(0, prevPost.commentCount - 1)
+                };
+            });
+            toast.info('Comment removed');
+        });
+
+        // Cleanup: leave room and remove listeners when component unmounts
+        return () => {
+            leavePost(postId);
+            socket.off('comment-added');
+            socket.off('comment-removed');
+        };
+    }, [socket, postId, joinPost, leavePost]);
+
     const handleAddComment = async (e: React.FormEvent) => {
         e.preventDefault();
         
@@ -79,12 +122,28 @@ const PostPage = () => {
     
         setCommentLoading(true);
         try {
-          await customAxios.post(`/posts/${post._id}/comments`, {
+            // await customAxios.post(`/posts/${post._id}/comments`, {
+          const response = await customAxios.post(`/posts/${post._id}/comments`, {
             content: newComment.trim()
           });
           
+          const newCommentData = response.data.comment;
+          
+          // Emit socket event for real-time updates
+        //   emitNewComment(post._id, newCommentData);
+        
+          // Add the new comment to local state immediately
+          setPost(prevPost => {
+            if (!prevPost) return prevPost;
+            return {
+              ...prevPost,
+              comments: [...prevPost.comments, newCommentData],
+              commentCount: prevPost.commentCount + 1
+            };
+          });
+          
           setNewComment('');
-          fetchPost(); // Refresh the post to get updated comments
+        //   fetchPost(); // Refresh the post to get updated comments
           toast.success('Comment added successfully');
         } catch (error) {
           console.error('Error adding comment:', error);
@@ -108,7 +167,17 @@ const PostPage = () => {
           setIsDeleting(true);
           await customAxios.delete(`/posts/${post._id}/comments/${commentId}`);
           
-          fetchPost(); // Refresh the post to get updated comments
+        //   fetchPost(); // Refresh the post to get updated comments
+          // Remove the comment from local state immediately
+          setPost(prevPost => {
+            if (!prevPost) return prevPost;
+            return {
+              ...prevPost,
+              comments: prevPost.comments.filter(comment => comment._id !== commentId),
+              commentCount: Math.max(0, prevPost.commentCount - 1)
+            };
+          });
+          
           toast.success('Comment deleted successfully');
         } catch (error) {
           if (axios.isAxiosError(error)) {
@@ -272,7 +341,7 @@ const PostPage = () => {
                             </div>
 
                             {/* Comments List */}
-                            <div className="max-h-96 overflow-y-auto">
+                            <div className="min-h-10 overflow-y-auto">
                                 {post.comments.length === 0 ? (
                                     <div className="p-8 text-center">
                                         <svg className="w-12 h-12 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
