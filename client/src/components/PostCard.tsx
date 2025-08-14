@@ -173,6 +173,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, onPostUpdated }) => {
   const handleDeletePost = async () => {
     try {
       await customAxios.delete(`/posts/${post._id}`);
+      if(location.pathname !== '/app'){
+        navigate(`/app`)
+      } 
       toast.success('Post deleted successfully');
       onPostUpdated();
       setShowDeleteConfirm(false);
