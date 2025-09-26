@@ -116,7 +116,8 @@ const VideoGrid = ({ loadVideos, setLoadVideos }: reloadVideo) => {
   }
 
   return (
-    <div className="p-4 w-full max-w-6xl">
+    <div className="p-4 w-full">
+    {/* <div className="p-4 w-full max-w-6xl"> */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
           Uploaded Videos {videos.length > 0 && `(${videos.length})`}
