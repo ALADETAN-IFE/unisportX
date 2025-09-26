@@ -131,7 +131,8 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
                     Videos
                   </Link>
                 )}
-                {(location.pathname == '/app/videos' || location.pathname == '/app/manage') && (
+                {(location.pathname !== '/app') && (
+                // {(location.pathname == '/app/videos' || location.pathname == '/app/manage' || location.pathname == '/') && (
                   <Link 
                     to="/app"
                     className="flex gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200 text-sm"
