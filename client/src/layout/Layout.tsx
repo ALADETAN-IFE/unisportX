@@ -3,11 +3,14 @@ import Header from "../components/Header";
 import { useState, useEffect } from "react";
 import LoadingScreen from "../components/LoadingScreen";
 import ScrollToTopBtn from "../components/ScrollToTopBtn";
+import { useSelector } from 'react-redux';
+import type { RootState } from '../global/Redux-Store/Store';
 
 
 const Layout = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
+  const { isLoggedIn } = useSelector((state: RootState) => state.uniSportX);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -20,6 +23,13 @@ const Layout = () => {
     if (isLoading) {
       return <LoadingScreen />
     }
+
+  const swithchIfLoggedIn = () => {
+    // if loggedin redirect to "/app"
+    if (isLoggedIn) {
+      navigate("/app"); // redirect if logged in
+    }
+  }
 
   return (
     <div className="dark:bg-gray-900 min-h-screen">
