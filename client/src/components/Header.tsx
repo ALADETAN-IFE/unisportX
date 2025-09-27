@@ -108,7 +108,7 @@ const Header = ({darkMode, setDarkMode}: ModeProps) => {
       <nav className="container mx-auto px-4 py-3 relative">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to={isLoggedIn ? "/app" : "/"} className="flex items-center space-x-2">
             <img src="/logo.png" alt="UniSportX" className="w-10 h-10" />
             <span className={`text-xl font-bold text-gray-800 dark:text-white hidden sm:block ${role == "admin" ? "min-md:!hidden" : "" }`}>
               UniSportX
