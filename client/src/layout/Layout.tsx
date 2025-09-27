@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { useState, useEffect } from "react";
 import LoadingScreen from "../components/LoadingScreen";
@@ -11,6 +11,7 @@ const Layout = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
   const { isLoggedIn } = useSelector((state: RootState) => state.uniSportX);
+   const navigate = useNavigate();
 
   const swithchIfLoggedIn = () => {
     // if loggedin redirect to "/app"
